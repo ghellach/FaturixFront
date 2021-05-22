@@ -14,7 +14,7 @@ function App() {
             </Provider>
         </React.Fragment>
     );
-  }
+}
   
-  export default App;
+export default App;
   

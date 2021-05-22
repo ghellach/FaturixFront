@@ -1,29 +1,51 @@
 import React from 'react';
-import {BrowserRouter as Router,Switch,Route,Link} from "react-router-dom";
-import {useSelector, useStore} from 'react-redux';
+import {BrowserRouter as Router,Switch,Route} from "react-router-dom";
+import AuthCheck from '../Library/AuthCheck';
+import CoreTheme from '../Library/CoreTheme';
 
-import AuthRouter from './AuthRouter';
+// Routed components
 import Index from '../pages/index';
+import Logout from '../pages/logout';
+import Login from '../pages/login';
+import My from '../pages/my';
+import AddInvoice from '../pages/invoice/add';
 
-export default function GlobalRouter (props) {
-
-    const gProps = useSelector(state => state);
-    console.log(gProps);
+export default function GlobalRouter () {
 
     return (
         <React.Fragment>
             <Router>
-                <Switch>
-                    <AuthRouter/>
-
-                    <Route path="/">
-                        <Switch>
-                        <Route path="/">
+                <AuthCheck>
+                    <Switch>
+                        <Route exact="true" path="/">
                             <Index />
                         </Route>
-                        </Switch>
-                    </Route>
-                </Switch>
+
+                        <Route exact="true" path="/login">
+                            <Login />
+                        </Route>
+
+                        <Route exact="true" path="/new">
+                        </Route>
+
+                        <Route exact="true" path="/logout">
+                            <Logout/>
+                        </Route>
+
+                        <CoreTheme>
+                            <Route exact="true" path="/my">
+                                <My/>
+                            </Route>
+
+                            <Route exact="true" path="/invoice/new">
+                                <AddInvoice/>
+                            </Route>
+                        </CoreTheme>
+
+                       
+                       
+                    </Switch>
+                </AuthCheck>
             </Router>
         </React.Fragment>
     )
