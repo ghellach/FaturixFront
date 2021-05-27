@@ -35,6 +35,7 @@ export class Login extends Component {
         .then(res => {
             window.localStorage.setItem("session", res.data.session);
             this.props.pingUser();
+            this.props.setCompanyState(res.data.hasCompanies);
             this.setState({redirectToMy: true});
         })
         .catch(err => {
@@ -74,7 +75,7 @@ export class Login extends Component {
                                     {this.state.alert ? <div className="alert alert-danger">{this.state.alertText}</div> : null}
                                     <form className="form-signin" onSubmit={this.loginRequest}>
                                         <div className="form-label-group">
-                                            <input name="email" value={this.state.email} onChange={this.onChange} type="text" id="email" className="form-control" placeholder="." required autoFocus />
+                                            <input name="email" value={this.state.email} onChange={this.onChange} type="text" id="email" className="form-control" placeholder="." required />
                                             <label htmlFor="email">{this.props.lang.auth.login.emailAddress}</label>
                                         </div>
                                         <div className="form-label-group">
@@ -83,7 +84,7 @@ export class Login extends Component {
                                         </div>
                                         <hr />
                                         {this.state.loggingIn ?
-                                            <button style={{width: "100%"}} className="btn btn-lg btn-primary btn-block text-uppercase disabled" type="submit"><i className="fas fa-circle-notch fa-spin"></i> {this.props.lang.auth.login.login}</button>
+                                            <button style={{width: "100%"}} className="btn btn-lg btn-primary btn-block text-uppercase disabled" type="submit">{this.props.style.loadingIcon} {this.props.lang.auth.login.login}</button>
                                             : <button style={{width: "100%"}} className="btn btn-lg btn-primary btn-block text-uppercase" type="submit"><i className="fas fa-sign-in-alt"></i> {this.props.lang.auth.login.login}</button>
                                         }
                                        
@@ -123,6 +124,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = dispatch => {
     return {
         //loading: (p) => actions.loading(dispatch, p)
+        setCompanyState: (has, which) => actions.setCompanyState(dispatch, has, which),
         pingUser: () => actions.pingUser(dispatch)
     }
 }

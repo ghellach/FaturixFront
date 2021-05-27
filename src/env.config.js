@@ -4,8 +4,8 @@ const urlsLocal = {
     API_URL: "http://localhost:5000"
 }
 const urlsLan = {
-    APP_URL: "http://10.0.0.180:3000",
-    API_URL: "http://10.0.0.180:5000"
+    APP_URL: "http://10.0.0.181:3000",
+    API_URL: "http://10.0.0.181:5000"
 }
 
 export const initialState = () => {

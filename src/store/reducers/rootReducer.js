@@ -11,6 +11,11 @@ export default function reducer (s = {}, action) {
             return state;
         }
 
+        case(types.SET_COMPANY_STATE): {
+            state.hasCompany = action.payload.hasCompany;
+            return state;
+        }
+
         default:
             return state;
     }

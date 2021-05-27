@@ -47,6 +47,10 @@ const initialGlobalState = () => {
 
         user: {
 
+        },
+
+        style: {
+            loadingIcon: <i className="fas fa-circle-notch fa-spin"></i>
         }
     }
 }

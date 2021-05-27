@@ -22,6 +22,15 @@ const fr = {
     my: {
         name: "Écran Principal",
         top: name => `Bonjour ${name} !`
+    },
+    create: {
+        top: name => `Salut ${name} !`,
+        text_first: "Bienvenue à Faturix. Vous pouvez commencer en créant un espace de gestion de commerce.",
+        placeHolder_name: "Nom de commerce",
+        next_button: "Créer",
+        alert: {
+            sameNameCompany: "Vous avez déja un espace de gestion de commerce avec exactement le même nom."
+        }
     }
 }
 

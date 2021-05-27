@@ -23,6 +23,15 @@ const en = {
     my: {
         name: "Main Screen",
         top: name => `Hello ${name} !`
+    },
+    create: {
+        top: name => `Hello ${name} !`,
+        text_first: "Welcome to Faturix. You can start by creating a commerce management space.",
+        placeHolder_name: "Business Name",
+        next_button: "Create",
+        alert: {
+            sameNameCompany: "You have a commerce management space with the exact same name."
+        }
     }
 }
 

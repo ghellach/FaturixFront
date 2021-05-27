@@ -9,6 +9,7 @@ import Logout from '../pages/logout';
 import Login from '../pages/login';
 import My from '../pages/my';
 import AddInvoice from '../pages/invoice/add';
+import Create from '../pages/create';
 
 export default function GlobalRouter () {
 
@@ -30,6 +31,10 @@ export default function GlobalRouter () {
 
                         <Route exact="true" path="/logout">
                             <Logout/>
+                        </Route>
+
+                        <Route exact="true" path="/create">
+                            <Create />
                         </Route>
 
                         <CoreTheme>

@@ -95,9 +95,13 @@ body {
   }
 
 
-  .card-body {
-    border-radius: 2rem;
-  }
-  .card {
-    border-radius: 2rem;
-  }
+.card-body {
+  border-radius: 2rem;
+}
+.card {
+  border-radius: 2rem;
+}
+
+input {
+  border-radius: 1rem;
+}
