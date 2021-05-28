@@ -59,7 +59,7 @@ const initialGlobalState = () => {
         },
         errorParser: err => {
             try {
-                if(String(err.response.section)+"."+String(err.response.code) == "company.notFound") {
+                if(String(err.response.data.section) === "auth" && String(err.response.data.code) === "noSelectedCompany") {
                     window.location.href = "/select";
                 }else {
                     return err;

@@ -57,7 +57,6 @@ class Select extends Component {
                                     <div className="col-sm-12 col-md-12" >
                                         <img alt="" src={this.props.APP_URL+"/assets/icons/logo.png"} width="200px" />
                                         <br/>
-                                        <h3>{this.props.lang.create.top(this.props.user.firstName)}</h3>
                                         <h4>{this.props.lang.select.text_first}</h4>
                                         
                                     </div>

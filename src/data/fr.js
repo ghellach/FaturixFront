@@ -1,7 +1,8 @@
 const fr = {
     main: {
         serverError: "Une erreur inconnue est arrivé",
-        backTo: to => `Back to ${to}.`
+        backTo: to => `Back to ${to}.`,
+        change_company: "Aller à un autre espace"
     },
     auth: {
         login: {

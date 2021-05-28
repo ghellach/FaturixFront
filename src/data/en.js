@@ -1,7 +1,8 @@
 const en = {
     main: {
         serverError: "An unknown error has occured",
-        backTo: to => `Back to ${to}.`
+        backTo: to => `Back to ${to}.`,
+        change_company: "Switch to another panel"
     },
     auth: {
         login: {

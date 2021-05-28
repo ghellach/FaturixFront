@@ -9,12 +9,13 @@ class SelectionCheck extends React.Component {
         super(props);
         this.state = {
             redirectToCreate: false,
-            redirectToSelect: false
+            redirectToSelect: false,
+            loaded: false,
         }
 
     }
 
-    async UNSAFE_componentWillMount() {
+    async componentDidMount() {
         const {pathname} = this.props.location;
         if(
             pathname !== "/login" &&
@@ -27,14 +28,16 @@ class SelectionCheck extends React.Component {
             if(!this.props.hasCompany) this.setState({redirectToCreate: true});
             if(!this.props.selectedCompany) this.setState({redirectToSelect: true});
             if(!this.props.company)  this.setState({redirectToSelect: true});
-            await this.props.setCompanyState(window.localStorage.getItem("company"), true);
+            //await this.props.setCompanyState(window.localStorage.getItem("company"), true);
+            this.setState({loaded: true});
+
         } 
     }
 
     render() {
         if(this.state.redirectToCreate) return <Redirect to="/create" />;
         if(this.state.selectedCompany) return <Redirect to="/select" />
-        return this.props.children
+        return this.props.children;
     }
     
 

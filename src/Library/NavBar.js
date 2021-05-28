@@ -25,10 +25,9 @@ export default function NavBar (props) {
                             <a className="nav-link active" aria-current="page" href="/">Menu</a>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" href="/my">Link</a>
-                        </li>
-                        <li className="nav-item">
-                        <a className="nav-link disabled" href="/my" tabIndex={-1} aria-disabled="true">Disabled</a>
+                            <Link to="/select" style={{ textDecoration: 'none' }}>
+                                <a className="nav-link" href="/my">| <i class="fas fa-retweet"></i> {gProps.lang.main.change_company}</a>
+                            </Link>
                         </li>
                     </ul>
                     <div className="d-flex" data-children-count={2}>

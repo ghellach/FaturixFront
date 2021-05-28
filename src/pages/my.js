@@ -7,11 +7,17 @@ export class My extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            invoices: []
         }
     }
 
     componentDidMount() {
         this.setState({loaded: true});
+        this.props.post("/invoice/fetch/all") 
+        .then(res => this.setState({invoices: res.data}))
+        .catch(e => {
+            const err = this.props.errorParser(e);
+        })
     }
 
     onChange = e => this.setState({[e.target.name]: e.target.value});
