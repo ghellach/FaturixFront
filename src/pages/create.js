@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import {Redirect, Link} from 'react-router-dom';
+import * as actions from '../store/actions/actions';
 
 
 export class Create extends Component {
@@ -26,9 +27,10 @@ export class Create extends Component {
         this.props.post("/company/add/company", {
             name: this.state.name
         })
-        .then(res => {
+        .then(async res => {
             this.setState({alert: false})
-            console.log(res.data);
+            console.log(res.data.company, window.localStorage.getItem("hasCompany"));
+            await this.props.setCompanyState(res.data.company, this.props.hasCompany);
         })
         .catch(err => {
             console.log(err.response);
@@ -110,6 +112,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = dispatch => {
     return {
+        setCompanyState: (which, has) => actions.setCompanyState(dispatch, which, has),
         //loading: (p) => actions.loading(dispatch, p)
     }
 }

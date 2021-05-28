@@ -13,6 +13,8 @@ export default function reducer (s = {}, action) {
 
         case(types.SET_COMPANY_STATE): {
             state.hasCompany = action.payload.hasCompany;
+            state.selectedCompany = action.payload.selectedCompany;
+            state.company = action.payload.company;
             return state;
         }
 

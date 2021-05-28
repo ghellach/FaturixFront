@@ -31,6 +31,10 @@ const fr = {
         alert: {
             sameNameCompany: "Vous avez déja un espace de gestion de commerce avec exactement le même nom."
         }
+    },
+    select: {
+        text_first: "Choisissez l'espace auquel vous voulez accéder.",
+        next_button: "Accéder",
     }
 }
 

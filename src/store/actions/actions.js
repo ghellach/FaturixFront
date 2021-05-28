@@ -13,24 +13,35 @@ export function pingUser (dispatch) {
     
 }
 
-export async function setCompanyState(dispatch, has, which) {
+export async function setCompanyState(dispatch, which, has) {
+    window.localStorage.setItem("hasCompany", has)
     try {
         if(which) {
-            window.localStorage.setItem("company", which);
-            axios.post(env.API_URL+"/company/fetch", {
+            
+            axios.post(env().API_URL+"/company/fetch/company", {
                 session: window.localStorage.getItem("session"),
                 uuid: which
             })
-            .then(res => dispatch({
-                type: types.SET_COMPANY_STATE,
-                payload: {
-                    has,
-                    company: has ? res.data : undefined,
+            .then(res => {
+                window.localStorage.setItem("hasCompany", true);
+                window.localStorage.setItem("selectedCompany", true);
+                window.localStorage.setItem("company", res.data.uuid);
+                dispatch({
+                    type: types.SET_COMPANY_STATE,
+                    payload: {
+                        hasCompany: true,
+                        selectedCompany: res.data.uuid ? true : false,
+                        company: res.data,
 
-                }
-            }))
-            .err(() => window.location.href = "/select");
+                    }
+                })
+            })
+            .catch(() => {
+                window.localStorage.setItem("selectedCompany", false)
+                window.location.href = "/select";
+            })
         }else {
+            window.localStorage.setItem("selectedCompany", false)
             if(has) window.location.href = "/select";
             else window.location.href = "/create";
         }

@@ -32,13 +32,15 @@ export class Login extends Component {
         this.setState({loggingIn: true});
         e.preventDefault();
         this.props.post("/auth/login", {email: this.state.email, password: this.state.password, client: "b"}, true)
-        .then(res => {
+        .then(async res => {
             window.localStorage.setItem("session", res.data.session);
+            window.localStorage.removeItem("company");
             this.props.pingUser();
-            this.props.setCompanyState(res.data.hasCompanies);
+            await this.props.setCompanyState(false, res.data.hasCompanies);
             this.setState({redirectToMy: true});
         })
         .catch(err => {
+            console.log(err);
             try {
                 this.setState({alertText: this.props.lang.auth.login.alert[err.response.data.code]})
             }catch{
@@ -124,7 +126,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = dispatch => {
     return {
         //loading: (p) => actions.loading(dispatch, p)
-        setCompanyState: (has, which) => actions.setCompanyState(dispatch, has, which),
+        setCompanyState: (which, has) => actions.setCompanyState(dispatch, which, has),
         pingUser: () => actions.pingUser(dispatch)
     }
 }

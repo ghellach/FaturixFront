@@ -48,9 +48,25 @@ const initialGlobalState = () => {
         user: {
 
         },
+        hasCompany: window.localStorage.getItem("hasCompany") == "true" ? true : false,
+        selectedCompany: window.localStorage.getItem("selectedCompany") == "true" ? true : false,
+        company: {
+
+        },
 
         style: {
             loadingIcon: <i className="fas fa-circle-notch fa-spin"></i>
+        },
+        errorParser: err => {
+            try {
+                if(String(err.response.section)+"."+String(err.response.code) == "company.notFound") {
+                    window.location.href = "/select";
+                }else {
+                    return err;
+                }
+            }catch{
+                return err;
+            }
         }
     }
 }

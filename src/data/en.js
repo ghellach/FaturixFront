@@ -32,6 +32,10 @@ const en = {
         alert: {
             sameNameCompany: "You have a commerce management space with the exact same name."
         }
+    },
+    select: {
+        text_first: "Select the management space you want to access.",
+        next_button: "Access",
     }
 }
 
