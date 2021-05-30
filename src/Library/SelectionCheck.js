@@ -23,12 +23,13 @@ class SelectionCheck extends React.Component {
             pathname !== "/logout" &&
             pathname !== "/index" &&
             pathname !== "/create" &&
-            pathname !== "/select"
+            pathname !== "/select" &&
+            pathname !== "/"
         ) {
             if(!this.props.hasCompany) this.setState({redirectToCreate: true});
             if(!this.props.selectedCompany) this.setState({redirectToSelect: true});
             if(!this.props.company)  this.setState({redirectToSelect: true});
-            //await this.props.setCompanyState(window.localStorage.getItem("company"), true);
+            await this.props.setCompanyState(window.localStorage.getItem("company"), true);
             this.setState({loaded: true});
 
         } 

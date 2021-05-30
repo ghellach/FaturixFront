@@ -31,6 +31,7 @@ export class Create extends Component {
             this.setState({alert: false})
             console.log(res.data.company, window.localStorage.getItem("hasCompany"));
             await this.props.setCompanyState(res.data.company, this.props.hasCompany);
+            setTimeout(() => this.setState({redirectToMy: true}), 2000);
         })
         .catch(err => {
             console.log(err.response);

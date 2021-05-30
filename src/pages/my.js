@@ -12,9 +12,10 @@ export class My extends Component {
     }
 
     componentDidMount() {
-        this.setState({loaded: true});
         this.props.post("/invoice/fetch/all") 
-        .then(res => this.setState({invoices: res.data}))
+        .then(res => {
+            this.setState({invoices: res.data, loaded: true})
+        })
         .catch(e => {
             const err = this.props.errorParser(e);
         })
@@ -33,7 +34,8 @@ export class My extends Component {
                 {this.state.loaded ? 
                     <div className="row">
                         <div className="col-12">
-                            <h3>{this.props.lang.my.top(this.props.user.firstName)}</h3>
+                            <h4>{this.props.lang.my.top(this.props.user.firstName)}</h4>
+                            <h3>{this.props.lang.my.one} {this.props.company.name}</h3>
                         </div>
                         <div className="col-sm-12 col-md-4">
                             <Link to="/invoice/new" style={{ textDecoration: 'none' }}>

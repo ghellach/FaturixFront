@@ -29,6 +29,7 @@ export default function NavBar (props) {
                                 <a className="nav-link" href="/my">| <i class="fas fa-retweet"></i> {gProps.lang.main.change_company}</a>
                             </Link>
                         </li>
+                        
                     </ul>
                     <div className="d-flex" data-children-count={2}>
                         <button onClick={gProps.changeLang} className="btn btn-outline-secondary" style={{color: "white"}}>

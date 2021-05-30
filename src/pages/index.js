@@ -10,7 +10,7 @@ export default function Index (props) {
 
     setTimeout(() => {
         setRedirect(true);
-    }, 2000)
+    }, 10)
 
     if(redirect === true) return <Redirect to="/my"/>
     return (

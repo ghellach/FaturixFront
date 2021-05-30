@@ -1,6 +1,6 @@
 const fr = {
     main: {
-        serverError: "Une erreur inconnue est arrivé",
+        serverError: "Une erreur inconnue est arrivée",
         backTo: to => `Back to ${to}.`,
         change_company: "Aller à un autre espace"
     },
@@ -22,6 +22,7 @@ const fr = {
     },
     my: {
         name: "Écran Principal",
+        one: "Espace de",
         top: name => `Bonjour ${name} !`
     },
     create: {

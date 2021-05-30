@@ -62,8 +62,8 @@ class Select extends Component {
                                     </div>
                                     <div className="col-12 row">
                                         {this.state.companies.map(company => {
-                                            return <div className="col-3">
-                                                <div class="card" style={{width: "18rem"}}>
+                                            return <div className="col-sm-12 col-md-3">
+                                                <div class="card" style={{width: "100%"}}>
                                                     <div class="card-body">
                                                         <h5 class="card-title">{company.name}</h5>
                                                         {this.state.loadingCompany === company.uuid 
@@ -72,6 +72,7 @@ class Select extends Component {
                                                         }
                                                     </div>
                                                 </div>
+                                                <br/>
                                             </div>
                                         })}
                                         

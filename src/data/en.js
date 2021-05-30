@@ -1,6 +1,6 @@
 const en = {
     main: {
-        serverError: "An unknown error has occured",
+        serverError: "An unknown error has occured.",
         backTo: to => `Back to ${to}.`,
         change_company: "Switch to another panel"
     },
@@ -23,6 +23,7 @@ const en = {
     },
     my: {
         name: "Main Screen",
+        one: "Panel of",
         top: name => `Hello ${name} !`
     },
     create: {
