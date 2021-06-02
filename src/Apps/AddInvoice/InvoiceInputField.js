@@ -1,3 +1,4 @@
+import {CurrencyInput} from 'react-currency-input-field';
 
 export default function InvoiceInputField (props) {
     return(
@@ -7,8 +8,7 @@ export default function InvoiceInputField (props) {
             className="form-control" 
             id="exampleInputEmail1" 
             name={props.name}
-            placeHolder={props.placeHolder}
-            disabled
+            value={props.quantity}
         />
     )
 }
