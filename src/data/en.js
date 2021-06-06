@@ -2,6 +2,7 @@ const en = {
     main: {
         serverError: "An unknown error has occured.",
         backTo: to => `Back to ${to}.`,
+        products: "Products",
         change_company: "Switch to another panel"
     },
     auth: {
@@ -38,6 +39,24 @@ const en = {
     select: {
         text_first: "Select the management space you want to access.",
         next_button: "Access",
+    },
+    product: {
+        mainBack: "the Products List",
+        product: "Product",
+        unitPrice: "Unit Price",
+        unitTaxes: "Taxes",
+        qrCode: "QR Code",
+        barCode: "Bar code",
+        0: "Available",
+        1: "In stock",
+        2: "Not in stock",
+        3: "Archived",
+        4: "Previous version of product",
+        5: "Suspended Product",
+        actionsType: {
+            quantityUpdate: "Quantity update",
+            productUpdate: "Product update"
+        }
     }
 }
 

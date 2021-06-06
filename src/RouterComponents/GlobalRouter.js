@@ -12,6 +12,8 @@ import AddInvoice from '../pages/invoice/add';
 import Create from '../pages/create';
 import Select from '../pages/select';
 import SelectionCheck from '../Library/SelectionCheck';
+import Products from '../pages/products';
+import Product from '../pages/products/one';
 
 export default function GlobalRouter () {
 
@@ -52,6 +54,16 @@ export default function GlobalRouter () {
                                 <Route exact="true" path="/invoice/new">
                                     <AddInvoice/>
                                 </Route>
+
+                                {/*Products*/}
+                                <Route exact="true" path="/products">
+                                    <Products/>
+                                </Route>
+
+                                <Route exact="true" path="/product/:uuid">
+                                    <Product/>
+                                </Route>
+
                             </CoreTheme>
 
                         

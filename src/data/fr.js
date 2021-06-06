@@ -1,7 +1,8 @@
 const fr = {
     main: {
         serverError: "Une erreur inconnue est arrivée",
-        backTo: to => `Back to ${to}.`,
+        backTo: to => `Retour à ${to}.`,
+        products: "Produits",
         change_company: "Aller à un autre espace"
     },
     auth: {
@@ -37,6 +38,24 @@ const fr = {
     select: {
         text_first: "Choisissez l'espace auquel vous voulez accéder.",
         next_button: "Accéder",
+    },
+    product: {
+        mainBack: "la liste des produits",
+        product: "Produit",
+        unitPrice: "Prix unitaire",
+        unitTaxes: "Taxes",
+        qrCode: "Code QR",
+        barCode: "Code barre",
+        0: "Disponible",
+        1: "En stock",
+        2: "En rupture de stock",
+        3: "Archivé",
+        4: "Version précédente d'un produit",
+        5: "Produit suspendu",
+        actionsType: {
+            quantityUpdate: "Mise à jour de la quantité",
+            productUpdate: "Mise à jour de produit"
+        }
     }
 }
 
