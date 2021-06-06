@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import {Redirect, Link, withRouter} from 'react-router-dom';
+import {taxRateToAmmount, statusDomObject} from './lib.js';
 
 
 export class Product extends Component {
@@ -72,7 +73,7 @@ export class Product extends Component {
                                     <div className="row">
                                         <div className="col-md-12 col-lg-6">
                                             <h4><b>{this.props.lang.product.unitPrice}: {product.unitPrice} {product.currency?.isoSign}</b></h4>
-                                            <h5>{this.props.lang.product.unitTaxes}: {this.taxRateToAmmount(product).ammount} {product.currency?.isoSign}</h5>
+                                            <h5>{this.props.lang.product.unitTaxes}: {taxRateToAmmount(product).ammount} {product.currency?.isoSign}</h5>
                                             <ul>
                                                 {product.unitTaxes.map(tax => {
                                                     return (

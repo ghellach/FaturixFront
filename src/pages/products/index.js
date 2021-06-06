@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import {Redirect, Link, withRouter} from 'react-router-dom';
+import {statusDomObject} from './lib.js';
 
 
 export class Products extends Component {
@@ -23,21 +24,7 @@ export class Products extends Component {
         })
     }
 
-    taxCalculation = taxes => {
-        let sum = 0;
-        taxes.forEach(tax => sum = sum + tax.rate);
-        return sum;
-    }
-
-    statusDomObject = (status, quantity) => {
-        let dom = ["secondary", ".", ""];
-        if (status === 0) dom = ["success", "Disponible", <i class="fas fa-check"></i>];
-        if (status === 1) dom = ["success", quantity+" en stock", <i class="fas fa-check"></i>];
-        if (status === 2) dom = ["danger", "Pas en stock", <i className="fas fa-exclamation-triangle"></i>];
-        if (status === 3) dom = ["warning", "Archivé", <i class="fas fa-archive"></i>];
-        if (status === 5) dom = ["warning", "Product suspendu", <i className="fas fa-exclamation-triangle"></i>];
-        return <h5><span class={"badge bg-"+dom[0]}>{dom[2]} {dom[1]}</span></h5>;
-    }
+    
 
     onChange = e => this.setState({[e.target.name]: e.target.value});
     
@@ -70,7 +57,7 @@ export class Products extends Component {
                                                 return <tr>
                                                     <th scope="row">{product.name}</th>
                                                     <td>{product.unitPrice} {product.currency.isoSign}</td>
-                                                    <td>{this.statusDomObject(product.status, product.quantity)}
+                                                    <td>{statusDomObject(product.status, product.quantity)}
                                                     <button className="btn btn-secondary btn-sm" onClick={() => this.props.history.push(String("/product/"+product.uuid))}><i class="fas fa-chevron-circle-right"></i> Afficher</button></td>
                                                 </tr>          
                                             })}
