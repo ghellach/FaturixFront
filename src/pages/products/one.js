@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import {Redirect, Link, withRouter} from 'react-router-dom';
+import QRCode from "react-qr-code";
 import {taxRateToAmmount, statusDomObject} from './lib.js';
 
 
@@ -85,7 +86,7 @@ export class Product extends Component {
                                             </ul>
                                             <hr/>
                                             {this.props.lang.product.qrCode}: <br/>
-                                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/QR_code_for_mobile_English_Wikipedia.svg/1200px-QR_code_for_mobile_English_Wikipedia.svg.png" width="50%" />
+                                            <QRCode value={JSON.stringify({type: "product", uuid: product.uuid})} />
                                         </div>
                                         <div className="col-md-12 col-lg-6">
                                         <table class="table">

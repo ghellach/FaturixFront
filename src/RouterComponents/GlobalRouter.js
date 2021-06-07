@@ -14,6 +14,8 @@ import Select from '../pages/select';
 import SelectionCheck from '../Library/SelectionCheck';
 import Products from '../pages/products';
 import Product from '../pages/products/one';
+import Test from '../pages/scan/qr';
+import Process from '../pages/scan/process';
 
 export default function GlobalRouter () {
 
@@ -62,6 +64,14 @@ export default function GlobalRouter () {
 
                                 <Route exact="true" path="/product/:uuid">
                                     <Product/>
+                                </Route>
+
+                                <Route exact="true" path="/qr">
+                                    <Test/>
+                                </Route>
+
+                                <Route exact="true" path="/process">
+                                    <Process/>
                                 </Route>
 
                             </CoreTheme>

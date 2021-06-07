@@ -30,6 +30,11 @@ export default function NavBar (props) {
                             </Link>
                         </li>
                         <li className="nav-item">
+                            <Link to="/qr" style={{ textDecoration: 'none' }}>
+                                <a className="nav-link" href="/qr">| <i class="fas fa-retweet"></i> Scanner QR</a>
+                            </Link>
+                        </li>
+                        <li className="nav-item">
                             <Link to="/select" style={{ textDecoration: 'none' }}>
                                 <a className="nav-link" href="/my">| <i class="fas fa-retweet"></i> {gProps.lang.main.change_company}</a>
                             </Link>
