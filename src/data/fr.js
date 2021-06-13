@@ -55,6 +55,35 @@ const fr = {
         actionsType: {
             quantityUpdate: "Mise à jour de la quantité",
             productUpdate: "Mise à jour de produit"
+        },
+        editProduct: "Modifier le produit",
+        editQuantity: "Modifier la quantité",
+        viewProduct: "Voir Product",
+        a: {
+            addNew: "Ajouter un nouveau produit",
+            name: "Nom",
+            price: "Prix",
+            currency: "Devise",
+            taxes: "Taxes",
+            taxesDescription: "* Les taxes sont appliquées dépendement de la localité du client définie lors de la génétation de la facture.",
+            commonTax: "Ajouter une taxe de vente",
+            specialTax: "Ajouter une taxe spéciale",
+            toQuantityModal: "Continuer vers quantités",
+            saveUpdates: "Enregistrer les modifications",
+        },
+        q: {
+            savedToCluster: "enregistré avec succès !",
+            toProductsPage: "Aller à la page des produits",
+            close: "Fermer",
+            saving: "Entrain d'enregistrer",
+            quantity: "Quantités",
+            units: "Unités: ",
+            or: "Ou",
+            clickAgain: "Recliquez pour enregistrer",
+            withDefinite: "Enregistrer la quantité",
+            withIndefinite: "Produit toujours disponible",
+            withOutOfStock: "Produit en rupture de stock",
+
         }
     }
 }

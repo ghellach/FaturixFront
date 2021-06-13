@@ -2,7 +2,6 @@ import {useState} from 'react';
 import CurrencyInput from 'react-currency-input-field';
 
 export const CommonTaxSelect = props => {
-    console.log(props.keys)
     const taxes = props.taxes;
 
     return (
@@ -42,7 +41,6 @@ export const CustomTaxField = props => {
     }
 
     const saver = () => {
-        console.log(buffer);
         props.saver(buffer.name, buffer.rate);
         setSaved(true);
     }
@@ -92,7 +90,6 @@ const taxCalculation = taxes => {
 }
 
 export const taxRateToAmmount = product => {
-    console.log(product);
     const rate = taxCalculation(product.unitTaxes);
     const {unitPrice} = product;
     return {
@@ -101,26 +98,15 @@ export const taxRateToAmmount = product => {
     }
 }
 
-export const statusDomObject = (status, quantity) => {
-    let dom = ["secondary", ".", ""];
-    if (status === 0) dom = ["success", "Disponible", <i className="fas fa-check"></i>];
-    if (status === 1) dom = ["success", quantity+" en stock", <i className="fas fa-check"></i>];
-    if (status === 2) dom = ["danger", "Pas en stock", <i className="fas fa-exclamation-triangle"></i>];
-    if (status === 3) dom = ["warning", "Archivé", <i className="fas fa-archive"></i>];
-    if (status === 5) dom = ["warning", "Product suspendu", <i className="fas fa-exclamation-triangle"></i>];
-    return <h5><span className={"badge bg-"+dom[0]}>{dom[2]} {dom[1]}</span></h5>;
-}
-
 export async function FinalStepProcessor (which, step, e, onlyQuantity) {
     if(e) e.preventDefault();
 
-    var modal = new window.bootstrap.Modal(document.getElementById("Modal"), {});
-    modal.show();
 
     let button;
     if(which === 1) button = "finiteButton";
     else if(which === 2) button = "infiniteButton";
     else if(which === 3) button = "updaterButton";
+    else if(which === 4) button = "outOfButton";
     else return;
 
     if(step === 1) {
@@ -128,8 +114,8 @@ export async function FinalStepProcessor (which, step, e, onlyQuantity) {
         setTimeout(() => this.setState({[button]: false}), 2000);
     }
     else if(step === 2) {
-        console.log(which);
-        this.setState({submitting: true, status: which === 1 ? 1 : 0});
+        this.setState({submitting: true, status: which === 4 ? 1 : which === 1 ? 1 : 0, quantity: which === 4 ? 0 : this.state.quantity});
+        setTimeout(() => {}, 10000);
         const body = {
             name: this.state?.name, 
             unitPrice: this.state?.unitPrice,
@@ -149,34 +135,45 @@ export async function FinalStepProcessor (which, step, e, onlyQuantity) {
         }
         try {
             if(onlyQuantity) {
-                console.log("yep", onlyQuantity);
-                console.log({
-                    status: this.state.status,
-                    quantity: this.state.quantity,
-                    uuid: this.state.product.uuid
-                })
                 const uuid = this.state.product.uuid;
-                await this.quantityUpdater(uuid);
+                await this.quantityUpdater(uuid, which);
                 this.setState({nextBlock: uuid});
             }else {
                 const res = await this.props.post("/product/add", body);
-                console.log(res.data);
                 if(this.state.newProduct) await this.quantityUpdater(res.data.uuid);
                 else this.setState({nextBlock: res.data.uuid})
             }
             setTimeout(() => this.setState({allDone: true}), 2000);
         }catch(err) {console.log(err.response); this.setState({submitting: false})}
-        console.log(body);
     } 
     else return
 
 }
 
 
-export async function quantityUpdater (uuid) {
+export async function quantityUpdater (uuid, which) {
     await this.props.post("/product/update/quantity", {
         uuid,
-        status: this.state.status,
-        quantity: this.state.quantity
+        status: which ? which === 4 ? 1 : which === 1 ? 1 : 0 : this.state.status,
+        quantity: Number(this.state.quantity)
     });
+    if(!this.state.newProduct) {
+        this.props.post("/product/fetch", {uuid: this.props.match.params.uuid})
+        .then(res => {
+            this.setState({product: res.data, loaded: true});
+            //document.getElementById("json").textContent = JSON.stringify(this.state.product, undefined, 2);
+        })
+        .catch(() => this.props.history.push("/products"))
+    }
+}
+
+
+export function statusDomObject (status, quantity, langVars) {
+    let dom = ["secondary", ".", ""];
+    if (status === 0) dom = ["success", langVars[0], <i class="fas fa-check"></i>];
+    if (status === 1) dom = ["success", quantity+" "+langVars[1], <i class="fas fa-check"></i>];
+    if (status === 2) dom = ["danger", langVars[2], <i className="fas fa-exclamation-triangle"></i>];
+    if (status === 3) dom = ["warning", langVars[3], <i class="fas fa-archive"></i>];
+    if (status === 5) dom = ["warning", langVars[5], <i className="fas fa-exclamation-triangle"></i>];
+    return <h5><span class={"badge bg-"+dom[0]}>{dom[2]} {dom[1]}</span></h5>;
 }

@@ -68,7 +68,7 @@ class Products extends Component {
                                                 return <tr>
                                                     <th scope="row">{product.name}</th>
                                                     <td>{product.unitPrice} {product.currency.isoSign}</td>
-                                                    <td>{statusDomObject(product.status, product.quantity)}
+                                                    <td>{statusDomObject(product.status, product.quantity, this.props.lang.product)}
                                                     <button className="btn btn-secondary btn-sm" onClick={() => this.props.history.push(String("/product/"+product.uuid))}><i class="fas fa-chevron-circle-right"></i> Afficher</button></td>
                                                 </tr>          
                                             })}

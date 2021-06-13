@@ -4,7 +4,7 @@ import {Redirect, Link, withRouter} from 'react-router-dom';
 import CurrencyInput from 'react-currency-input-field';
 import {v4 as uuid} from 'uuid';
 
-import { CommonTaxSelect, CustomTaxField, FinalStepProcessor, quantityUpdater } from './lib';
+import { CommonTaxSelect, CustomTaxField, FinalStepProcessor, quantityUpdater, statusDomObject } from './lib';
 import ModalQuantity from './ModalQuantity';
 
 class Assesment extends Component {
@@ -17,10 +17,12 @@ class Assesment extends Component {
             newProduct: this.props.uuid ? false : true,
             finiteButton: false,
             infiniteButton: false,
+            outOfButton: false,
             updaterButton: false,
             submitting: false,
             allDone: false,
             nextBlock: "",
+            allowBack: true,
 
             // data
             name: this.props.name,
@@ -59,16 +61,6 @@ class Assesment extends Component {
         modal.show();
     }
 
-    statusDomObject = (status, quantity) => {
-        let dom = ["secondary", ".", ""];
-        if (status === 0) dom = ["success", "Disponible", <i class="fas fa-check"></i>];
-        if (status === 1) dom = ["success", quantity+" en stock", <i class="fas fa-check"></i>];
-        if (status === 2) dom = ["danger", "Pas en stock", <i className="fas fa-exclamation-triangle"></i>];
-        if (status === 3) dom = ["warning", "Archivé", <i class="fas fa-archive"></i>];
-        if (status === 5) dom = ["warning", "Product suspendu", <i className="fas fa-exclamation-triangle"></i>];
-        return <h5><span class={"badge bg-"+dom[0]}>{dom[2]} {dom[1]}</span></h5>;
-    }
-
     onChange = e => this.setState({[e.target.name]: e.target.value});
     
     render() {
@@ -83,28 +75,36 @@ class Assesment extends Component {
                                 <div className="card-body">
                                     <this.props.Library.BackButton to="/products" name={this.props.lang.product.mainBack} />
                                     <hr/>
-                                    <form onSubmit={this.state.newProduct ? this.goToQuantity : e => this.finalButton(3, 2, e)}>
+                                    <form onSubmit={
+                                        this.state.newProduct ? this.goToQuantity 
+                                        : e => {
+                                            this.setState({submitting: true, allowBack: false})
+                                            var modal = new window.bootstrap.Modal(document.getElementById("Modal"), {});
+                                            modal.show(); 
+                                            this.finalButton(3, 2, e)
+                                        }
+                                    }>
                                         <div className="row">
-                                            {this.state.newProduct ? <h4>Add a new product</h4> : 
+                                            {this.state.newProduct ? <h4>{this.props.lang.product.a.addNew}</h4> : 
                                                 <div className="row">
-                                                    <div className="col-sm-12 col-md-9">
+                                                    <div className="col-sm-12 col-md-8">
                                                         <h4>{this.props.lang.product.product}: {this.props.name}</h4>
-                                                        {this.statusDomObject(this.props.status, this.props.quantity)}
+                                                        {statusDomObject(this.props.status, this.props.quantity, this.props.lang.product)}
                                                         <br/>
                                                     </div>
-                                                    <div className="col-sm-12 col-md-3">
-                                                        <button className="btn btn-secondary" onClick={() => this.setState({viewing: false})}><i class="fas fa-tools"></i> Edit product</button>
+                                                    <div className="col-sm-12 col-md-4">
+                                                        <button className="btn btn-secondary" type="button" onClick={() => this.props?.viewing(true)}><i class="fas fa-eye"></i> {this.props.lang.product.viewProduct}</button>
                                                     </div>
                                                     <hr/>
                                                 </div>
                                             }
                                             <div className="col-md-12 col-lg-6">
 
-                                                <h6>Name of the product</h6>
+                                                <h6>{this.props.lang.product.a.name}</h6>
                                                 <input required="true" name="name" value={this.state.name} onChange={this.onChange} className="form-control" style={{borderRadius: "1rem"}}></input>
                                                 <br/>
 
-                                                <h6>Price</h6>
+                                                <h6>{this.props.lang.product.a.price}</h6>
                                                 <CurrencyInput
                                                     style={{borderRadius: "1rem"}}
                                                     className="form-control"
@@ -120,7 +120,7 @@ class Assesment extends Component {
                                                 />
                                                 <br/>
 
-                                                <h6>Currency</h6>
+                                                <h6>{this.props.lang.product.a.currency}</h6>
                                                 <select name="currency" value={this.state.currency} required="true" style={{borderRadius: "1rem"}} className="form-control" onChange={this.onChange} >
                                                     <option style={{color: "grey"}}></option>
                                                     {this.state.feed.currencies.map(currency => (
@@ -132,14 +132,14 @@ class Assesment extends Component {
                                             </div>
                                             <div className="col-md-12 col-lg-6">
                                                 <hr/>
-                                                <h6>Taxes</h6>
-                                                <p>* Taxes are applied depending on the customer's location defined at invoice generation</p>
+                                                <h6>{this.props.lang.product.a.taxes}</h6>
+                                                <p>{this.props.lang.product.a.taxesDescription}</p>
                                                 <div className="row">
                                                     <div className="col-6">
-                                                        <button type="button" style={{width: "100%"}} className="btn btn-success" onClick={() => this.setState({bufferTaxes: [...this.state.bufferTaxes, {type: 0}]})}><i className="fas fa-plus"/> Add a common tax</button>
+                                                        <button type="button" style={{width: "100%"}} className="btn btn-success" onClick={() => this.setState({bufferTaxes: [...this.state.bufferTaxes, {type: 0}]})}><i className="fas fa-plus"/> {this.props.lang.product.a.commonTax}</button>
                                                     </div>
                                                     <div className="col-6">
-                                                        <button type="button" style={{width: "100%"}} className="btn btn-outline-primary" onClick={() => this.setState({bufferTaxes: [...this.state.bufferTaxes, {type: 1}]})}><i className="fas fa-plus"/> Add a custom tax</button>
+                                                        <button type="button" style={{width: "100%"}} className="btn btn-outline-primary" onClick={() => this.setState({bufferTaxes: [...this.state.bufferTaxes, {type: 1}]})}><i className="fas fa-plus"/> {this.props.lang.product.a.specialTax}</button>
                                                     </div>
                                                 </div>
                                                 <br/>
@@ -191,9 +191,9 @@ class Assesment extends Component {
                                                 <hr/>
                                                 {this.state.newProduct
                                                 ? <button type="submit" className="btn btn-primary">
-                                                    Continue to quantity <i className="fas fa-arrow-circle-right"></i>
+                                                    {this.props.lang.product.a.toQuantityModal} <i className="fas fa-arrow-circle-right"></i>
                                                 </button>
-                                                : <button type="submit" className="btn btn-primary"><i class="fas fa-check"></i> Save updates</button>
+                                                : <button type="submit" className="btn btn-primary"><i class="fas fa-check"></i> {this.props.lang.product.a.saveUpdates}</button>
                                                 }
                                                 
                                             </div>

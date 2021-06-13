@@ -56,6 +56,35 @@ const en = {
         actionsType: {
             quantityUpdate: "Quantity update",
             productUpdate: "Product update"
+        },
+        editProduct: "Edit product",
+        editQuantity: "Edit quantity",
+        viewProduct: "View Product",
+        a: {
+            addNew: "Add a new product",
+            name: "Name",
+            price: "Price",
+            currency: "Currency",
+            taxes: "Taxes",
+            taxesDescription: "* Taxes are applied depending on the customer's location defined at invoice time.",
+            commonTax: "Add a common tax",
+            specialTax: "Add special tax",
+            toQuantityModal: "Continue to quantity",
+            saveUpdates: "Save updates",
+        },
+        q: {
+            savedToCluster: "saved to the cluster successfully !",
+            toProductsPage: "Go to products page",
+            close: "Close",
+            saving: "Saving",
+            quantity: "Quantity",
+            units: "Units: ",
+            or: "Or",
+            clickAgain: "Click again to save",
+            withDefinite: "Save the product's quantity",
+            withIndefinite: "Product always availabe",
+            withOutOfStock: "Product out of stock",
+
         }
     }
 }

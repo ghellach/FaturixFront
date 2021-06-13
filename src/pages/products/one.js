@@ -55,15 +55,7 @@ export class Product extends Component {
         }
     }
 
-    statusDomObject = (status, quantity) => {
-        let dom = ["secondary", ".", ""];
-        if (status === 0) dom = ["success", "Disponible", <i class="fas fa-check"></i>];
-        if (status === 1) dom = ["success", quantity+" en stock", <i class="fas fa-check"></i>];
-        if (status === 2) dom = ["danger", "Pas en stock", <i className="fas fa-exclamation-triangle"></i>];
-        if (status === 3) dom = ["warning", "Archivé", <i class="fas fa-archive"></i>];
-        if (status === 5) dom = ["warning", "Product suspendu", <i className="fas fa-exclamation-triangle"></i>];
-        return <h5><span class={"badge bg-"+dom[0]}>{dom[2]} {dom[1]}</span></h5>;
-    }
+    viewing = viewing => this.setState({viewing})
 
     onChange = e => this.setState({[e.target.name]: e.target.value});
     
@@ -86,18 +78,18 @@ export class Product extends Component {
                                     <this.props.Library.BackButton to="/products" name={this.props.lang.product.mainBack} />
                                     <hr/>
                                     <div className="row">
-                                        <div className="col-sm-12 col-md-8">
+                                        <div className="col-sm-12 col-md-7">
                                             <h4>{this.props.lang.product.product}: {product.name}</h4>
-                                            {this.statusDomObject(product.status, product.quantity)}
+                                            {statusDomObject(product.status, product.quantity, this.props.lang.product)}
                                             <br/>
                                         </div>
-                                        <div className="col-sm-12 col-md-4">
-                                            <button className="btn btn-secondary" style={{marginRight: "3px"}} onClick={() => this.setState({viewing: false})}><i class="fas fa-tools"></i> Edit product</button>
+                                        <div className="col-sm-12 col-md-5">
+                                            <button className="btn btn-secondary" style={{marginRight: "3px"}} onClick={() => this.viewing(false)}><i class="fas fa-tools"></i> {this.props.lang.product.editProduct}</button>
                                             <button className="btn btn-secondary" onClick={() => {
                                                 var modal = new window.bootstrap.Modal(document.getElementById("Modal"), {});
                                                 modal.show();
                                             }}>
-                                                <i class="fas fa-boxes"></i> Edit quantity
+                                                <i class="fas fa-boxes"></i> {this.props.lang.product.editQuantity}
                                             </button>
                                         </div>
                                     </div>
@@ -170,6 +162,7 @@ export class Product extends Component {
                             else return {...tax, type: 1, name: tax?.names.en}
                         })} 
                         previousBlock={this.state.product.uuid}
+                        viewing={this.viewing}
                     />
                     
                 :<React.Fragment>
