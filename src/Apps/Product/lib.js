@@ -110,3 +110,73 @@ export const statusDomObject = (status, quantity) => {
     if (status === 5) dom = ["warning", "Product suspendu", <i className="fas fa-exclamation-triangle"></i>];
     return <h5><span className={"badge bg-"+dom[0]}>{dom[2]} {dom[1]}</span></h5>;
 }
+
+export async function FinalStepProcessor (which, step, e, onlyQuantity) {
+    if(e) e.preventDefault();
+
+    var modal = new window.bootstrap.Modal(document.getElementById("Modal"), {});
+    modal.show();
+
+    let button;
+    if(which === 1) button = "finiteButton";
+    else if(which === 2) button = "infiniteButton";
+    else if(which === 3) button = "updaterButton";
+    else return;
+
+    if(step === 1) {
+        this.setState({[button]: true});
+        setTimeout(() => this.setState({[button]: false}), 2000);
+    }
+    else if(step === 2) {
+        console.log(which);
+        this.setState({submitting: true, status: which === 1 ? 1 : 0});
+        const body = {
+            name: this.state?.name, 
+            unitPrice: this.state?.unitPrice,
+            currency: this.state?.currency,
+            unitTaxes: this.state?.bufferTaxes?.map(tax => {
+                if(tax.type === 0) return tax;
+                else if(tax.type === 1) return {
+                    names: {
+                        fr: tax.name,
+                        en: tax.name
+                    },
+                    rate: tax.rate
+                }
+            }),
+            // if previous block provided
+            previousBlock: this.props?.previousBlock
+        }
+        try {
+            if(onlyQuantity) {
+                console.log("yep", onlyQuantity);
+                console.log({
+                    status: this.state.status,
+                    quantity: this.state.quantity,
+                    uuid: this.state.product.uuid
+                })
+                const uuid = this.state.product.uuid;
+                await this.quantityUpdater(uuid);
+                this.setState({nextBlock: uuid});
+            }else {
+                const res = await this.props.post("/product/add", body);
+                console.log(res.data);
+                if(this.state.newProduct) await this.quantityUpdater(res.data.uuid);
+                else this.setState({nextBlock: res.data.uuid})
+            }
+            setTimeout(() => this.setState({allDone: true}), 2000);
+        }catch(err) {console.log(err.response); this.setState({submitting: false})}
+        console.log(body);
+    } 
+    else return
+
+}
+
+
+export async function quantityUpdater (uuid) {
+    await this.props.post("/product/update/quantity", {
+        uuid,
+        status: this.state.status,
+        quantity: this.state.quantity
+    });
+}

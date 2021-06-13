@@ -2,7 +2,9 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import {Redirect, Link, withRouter} from 'react-router-dom';
 import QRCode from "react-qr-code";
-import {taxRateToAmmount, statusDomObject} from '../../Apps/Product/lib.js';
+import {taxRateToAmmount, statusDomObject, FinalStepProcessor, quantityUpdater} from '../../Apps/Product/lib.js';
+import Assesment from '../../Apps/Product/Assesment.js';
+import ModalQuantity from '../../Apps/Product/ModalQuantity';
 
 
 export class Product extends Component {
@@ -10,8 +12,22 @@ export class Product extends Component {
         super(props);
         this.state = {
             product: {unitTaxes: []},
-            loaded: true
+            loaded: true,
+            viewing: true,
+
+
+            // for quantity updater
+            finiteButton: false,
+            infiniteButton: false,
+            submitting: false,
+            allDone: false,
+            quantity: 0,
+            status: 0,
         }
+
+        this.ModalQuantity = ModalQuantity.bind(this);
+        this.finalButton = FinalStepProcessor.bind(this);
+        this.quantityUpdater = quantityUpdater.bind(this);
     }
 
     componentDidMount() {
@@ -62,18 +78,34 @@ export class Product extends Component {
         
             <React.Fragment>
                 {this.state.loaded ? 
+                    this.state.viewing ?
                     <div className="row">
                         <div className="col-sm-12 col-md-12">
                             <div className="card">
                                 <div className="card-body">
                                     <this.props.Library.BackButton to="/products" name={this.props.lang.product.mainBack} />
                                     <hr/>
-                                    <h4>{this.props.lang.product.product}: {product.name}</h4>
-                                    {this.statusDomObject(product.status, product.quantity)}
+                                    <div className="row">
+                                        <div className="col-sm-12 col-md-8">
+                                            <h4>{this.props.lang.product.product}: {product.name}</h4>
+                                            {this.statusDomObject(product.status, product.quantity)}
+                                            <br/>
+                                        </div>
+                                        <div className="col-sm-12 col-md-4">
+                                            <button className="btn btn-secondary" style={{marginRight: "3px"}} onClick={() => this.setState({viewing: false})}><i class="fas fa-tools"></i> Edit product</button>
+                                            <button className="btn btn-secondary" onClick={() => {
+                                                var modal = new window.bootstrap.Modal(document.getElementById("Modal"), {});
+                                                modal.show();
+                                            }}>
+                                                <i class="fas fa-boxes"></i> Edit quantity
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
                                     <hr/>
                                     <div className="row">
                                         <div className="col-md-12 col-lg-6">
-                                            <h4><b>{this.props.lang.product.unitPrice}: {product.unitPrice} {product.currency?.isoSign}</b></h4>
+                                            <h4><b>{this.props.lang.product.unitPrice}: {Number(product.unitPrice).toFixed(2)} {product.currency?.isoSign}</b></h4>
                                             <h5>{this.props.lang.product.unitTaxes}: {/*{taxRateToAmmount(product).ammount} {product.currency?.isoSign}*/}</h5>
                                             <ul>
                                                 {product.unitTaxes.map(tax => {
@@ -122,7 +154,23 @@ export class Product extends Component {
                                 </div>
                             </div>
                         </div>
+                        {this.ModalQuantity()}
                     </div>
+                    : <Assesment
+                        // data
+                        uuid={this.state.product.uuid}
+                        name={this.state.product.name}
+                        unitPrice={this.state.product.unitPrice}
+                        currency={this.state.product.currency?.uuid}
+                        unitTaxes={this.state.product.unitTaxes}
+                        quantity={this.state.product.quantity}
+                        status={this.state.product.status}
+                        bufferTaxes={this.state.product.unitTaxes.map(tax => {
+                            if(tax.uuid) return {...tax, type: 0, name: tax?.names.en}
+                            else return {...tax, type: 1, name: tax?.names.en}
+                        })} 
+                        previousBlock={this.state.product.uuid}
+                    />
                     
                 :<React.Fragment>
                     <this.props.loadingComp/>

@@ -42,6 +42,7 @@ class NewProduct extends Component {
                     <Assesment 
                     
                         // data
+                        uuid={null}
                         name= ""
                         unitPrice={0}
                         currency=""

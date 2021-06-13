@@ -2,8 +2,10 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import {Redirect, Link, withRouter} from 'react-router-dom';
 import CurrencyInput from 'react-currency-input-field';
-import { CommonTaxSelect, CustomTaxField } from './lib';
 import {v4 as uuid} from 'uuid';
+
+import { CommonTaxSelect, CustomTaxField, FinalStepProcessor, quantityUpdater } from './lib';
+import ModalQuantity from './ModalQuantity';
 
 class Assesment extends Component {
     constructor(props) {
@@ -11,14 +13,18 @@ class Assesment extends Component {
         this.state = {
             // system
             loaded: false,
+            uuid: this.props.uuid,
+            newProduct: this.props.uuid ? false : true,
             finiteButton: false,
             infiniteButton: false,
+            updaterButton: false,
             submitting: false,
             allDone: false,
+            nextBlock: "",
 
             // data
             name: this.props.name,
-            unitPrice: this.props.unitProce,
+            unitPrice: this.props.unitPrice,
             currency: this.props.currency,
             unitTaxes: this.props.unitTaxes,
             quantity: this.props.quantity,
@@ -29,6 +35,9 @@ class Assesment extends Component {
             status: this.props.status,
             bufferTaxes: this.props.bufferTaxes
         }
+        this.ModalQuantity = ModalQuantity.bind(this);
+        this.finalButton = FinalStepProcessor.bind(this);
+        this.quantityUpdater = quantityUpdater.bind(this);
     }
 
     componentDidMount() {
@@ -50,47 +59,14 @@ class Assesment extends Component {
         modal.show();
     }
 
-    finalButton = async (which, step) => {
-        console.log(which, step)
-        let button;
-        if(which === 1) button = "finiteButton";
-        else if(which === 2) button = "infiniteButton";
-        else return;
-
-        if(step === 1) {
-            this.setState({[button]: true});
-            setTimeout(() => this.setState({[button]: false}), 2000);
-        }
-        else if(step === 2) {
-            this.setState({submitting: true, status: which === 1 ? 1 : 0});
-            const body = {
-                name: this.state.name, 
-                unitPrice: this.state.unitPrice,
-                currency: this.state.currency,
-                unitTaxes: this.state.bufferTaxes.map(tax => {
-                    if(tax.type === 0) return tax;
-                    else if(tax.type === 1) return {
-                        names: {
-                            fr: tax.name,
-                            en: tax.name
-                        },
-                        rate: tax.rate
-                    }
-                }),
-            }
-            try {
-                const res = await this.props.post("/product/add", body);
-                await this.props.post("/product/update/quantity", {
-                    uuid: res.data.uuid,
-                    status: this.state.status,
-                    quantity: this.state.quantity
-                });
-                setTimeout(() => this.setState({allDone: true}), 2000);
-            }catch(err) {console.log(err.response); this.setState({submitting: false})}
-            console.log(body);
-        } 
-        else return
-
+    statusDomObject = (status, quantity) => {
+        let dom = ["secondary", ".", ""];
+        if (status === 0) dom = ["success", "Disponible", <i class="fas fa-check"></i>];
+        if (status === 1) dom = ["success", quantity+" en stock", <i class="fas fa-check"></i>];
+        if (status === 2) dom = ["danger", "Pas en stock", <i className="fas fa-exclamation-triangle"></i>];
+        if (status === 3) dom = ["warning", "Archivé", <i class="fas fa-archive"></i>];
+        if (status === 5) dom = ["warning", "Product suspendu", <i className="fas fa-exclamation-triangle"></i>];
+        return <h5><span class={"badge bg-"+dom[0]}>{dom[2]} {dom[1]}</span></h5>;
     }
 
     onChange = e => this.setState({[e.target.name]: e.target.value});
@@ -107,10 +83,21 @@ class Assesment extends Component {
                                 <div className="card-body">
                                     <this.props.Library.BackButton to="/products" name={this.props.lang.product.mainBack} />
                                     <hr/>
-                                    <form onSubmit={this.goToQuantity}>
+                                    <form onSubmit={this.state.newProduct ? this.goToQuantity : e => this.finalButton(3, 2, e)}>
                                         <div className="row">
-                                            <h4>Add a new product</h4>
-                                            <br/>
+                                            {this.state.newProduct ? <h4>Add a new product</h4> : 
+                                                <div className="row">
+                                                    <div className="col-sm-12 col-md-9">
+                                                        <h4>{this.props.lang.product.product}: {this.props.name}</h4>
+                                                        {this.statusDomObject(this.props.status, this.props.quantity)}
+                                                        <br/>
+                                                    </div>
+                                                    <div className="col-sm-12 col-md-3">
+                                                        <button className="btn btn-secondary" onClick={() => this.setState({viewing: false})}><i class="fas fa-tools"></i> Edit product</button>
+                                                    </div>
+                                                    <hr/>
+                                                </div>
+                                            }
                                             <div className="col-md-12 col-lg-6">
 
                                                 <h6>Name of the product</h6>
@@ -124,6 +111,7 @@ class Assesment extends Component {
                                                     prefix="$"
                                                     decimalSeparator="." groupSeparator=""
                                                     placeholder="$0"
+                                                    defaultValue={this.state.unitPrice}
                                                     decimalsLimit={2}
                                                     name="unitPrice"
                                                     allowNegativeValue={false}
@@ -133,7 +121,7 @@ class Assesment extends Component {
                                                 <br/>
 
                                                 <h6>Currency</h6>
-                                                <select name="currency" required="true" style={{borderRadius: "1rem"}} className="form-control" onChange={this.onChange} >
+                                                <select name="currency" value={this.state.currency} required="true" style={{borderRadius: "1rem"}} className="form-control" onChange={this.onChange} >
                                                     <option style={{color: "grey"}}></option>
                                                     {this.state.feed.currencies.map(currency => (
                                                         <option value={currency.uuid}>{currency.isoName} ({currency.isoSign})</option>
@@ -201,9 +189,13 @@ class Assesment extends Component {
                                             </div>
                                             <div className="col-12 text-center">
                                                 <hr/>
-                                                <button type="submit" className="btn btn-primary">
+                                                {this.state.newProduct
+                                                ? <button type="submit" className="btn btn-primary">
                                                     Continue to quantity <i className="fas fa-arrow-circle-right"></i>
                                                 </button>
+                                                : <button type="submit" className="btn btn-primary"><i class="fas fa-check"></i> Save updates</button>
+                                                }
+                                                
                                             </div>
                                         </div>
                                     </form>
@@ -212,65 +204,8 @@ class Assesment extends Component {
                                 </div>
                             </div>
                         </div>
-                        <div className="modal fade" id="Modal" tabindex="-1"  data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                            <div className="modal-dialog modal-dialog-centered">
-                                {this.state.submitting ? 
-                                    <div style={{borderRadius: "2rem"}} className="modal-content">
-                                        {this.state.allDone ? 
-                                            <div className="modal-body text-center">
-                                                <i className="fas fa-check fa-3x" style={{color: "#00db6a"}} />
-                                                <br/>
-                                                <h4>{this.state.name} saved to the cluster successfully !</h4>
-                                                <hr/>
-                                                <button onClick={() => window.location.href = "/products"} className="btn btn-success">Go to the products page</button>
-                                            </div>
-                                            : <div className="modal-body text-center">
-                                                <img src={this.props.APP_URL+"/assets/icons/loaderyes.gif"} width="300px" />
-                                                <h4>Saving {this.state.name} ...</h4>
-                                                <br/>
-                                            </div>
-                                        } 
-                                    </div>
-                                : <div style={{borderRadius: "2rem"}} className="modal-content">
-                                    <div className="modal-header">
-                                        <h5 className="modal-title" id="exampleModalLabel">Quantity</h5>
-                                    </div>
-                                    <div className="modal-body">
-                                        
-                                        <CurrencyInput
-                                            style={{borderRadius: "1rem"}}
-                                            className="form-control"
-                                            decimalSeparator="." groupSeparator=""
-                                            placeholder="Units: "
-                                            prefix="Units: "
-                                            name="quantity"
-                                            allowNegativeValue={false}
-                                            allowDecimals={false}
-                                            required="true"
-                                            onValueChange={(value, name) => this.onChange({target: {name, value}})} 
-                                        /><br/>
-                                        {this.state.finiteButton ?
-                                            <button style={{width: "100%"}} className="btn btn-primary" onClick={() => this.finalButton(1, 2)}><i class="fas fa-redo"></i> Click again to save</button>
-                                            : <button style={{width: "100%"}} className="btn btn-primary" onClick={() => this.finalButton(1, 1)}><i class="fas fa-list-ol"></i> Save with definite quantity</button>
-                                        }
-                                        
-                                        
-                                        <hr/>
-                                        <div className="text-center">Or</div>
-                                        <hr/>
-
-                                        {this.state.infiniteButton ?
-                                                <button style={{width: "100%"}} className="btn btn-primary" onClick={() => this.finalButton(2, 2)}><i class="fas fa-redo"></i> Click again to save</button>
-                                            : <button style={{width: "100%"}} className="btn btn-primary" onClick={() => this.finalButton(2, 1)}><i class="fas fa-infinity"></i> Save as infinitely available</button>
-                                        }
-                                    </div>
-                                    <div className="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fas fa-arrow-circle-left"></i> Go back to product page</button>
-                                    </div>
-                                </div> }
-                            </div>
-                        </div>
-                    </div>
+                        {this.ModalQuantity()}
+                     </div>
                     
                 :<React.Fragment>
                     <this.props.loadingComp/>
