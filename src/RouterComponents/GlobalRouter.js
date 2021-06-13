@@ -16,6 +16,7 @@ import Products from '../pages/products';
 import Product from '../pages/products/one';
 import Test from '../pages/scan/qr';
 import Process from '../pages/scan/process';
+import NewProduct from '../pages/products/new';
 
 export default function GlobalRouter () {
 
@@ -65,6 +66,12 @@ export default function GlobalRouter () {
                                 <Route exact="true" path="/product/:uuid">
                                     <Product/>
                                 </Route>
+
+                                <Route exact="true" path="/products/new">
+                                    <NewProduct/>
+                                </Route>
+
+                                
 
                                 <Route exact="true" path="/qr">
                                     <Test/>

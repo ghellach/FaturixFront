@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import {Redirect, Link, withRouter} from 'react-router-dom';
-import {statusDomObject} from './lib.js';
+import {statusDomObject} from '../../Apps/Product/lib.js';
 
 
-export class Products extends Component {
+class Products extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -43,7 +43,18 @@ export class Products extends Component {
                                 <div className="card-body">
                                     <this.props.Library.BackButton to="/my" name={this.props.lang.my.name} />
                                     <hr/>
-                                    <h4>Products List</h4>
+                                    <div className="row">
+                                        <div className="col-sm-12 col-md-9">
+                                            <h4>Products List</h4>
+                                        </div>
+                                        <div className="col-sm-12 col-md-3">
+                                            <Link to="/products/new" style={{textDecoration: "none"}}>
+                                                <button className="btn btn-primary">
+                                                    <i className="fas fa-plus"/> Ajouter un produit
+                                                </button>
+                                            </Link>
+                                        </div>
+                                    </div>
                                     <table class="table">
                                         <thead>
                                             <tr>

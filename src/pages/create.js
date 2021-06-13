@@ -63,13 +63,13 @@ export class Create extends Component {
                                         <h4>{this.props.lang.create.text_first}</h4>
                                         {this.state.alert ? <div className="alert alert-danger">{this.state.alertText}</div> : null}
                                         <hr/>
-                                        <div class="input-group input-group-lg">
-                                            <input onChange={this.onChange} name="name" value={this.state.name} placeholder={this.props.lang.create.placeHolder_name} type="text" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm"/>
+                                        <div className="input-group input-group-lg">
+                                            <input onChange={this.onChange} name="name" value={this.state.name} placeholder={this.props.lang.create.placeHolder_name} type="text" className="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm"/>
                                         </div>
                                         <br/>
                                         {this.state.requesting ? 
                                             <button className="btn btn-outline-primary disabled">{this.props.style.loadingIcon} {this.props.lang.create.next_button}</button>:
-                                            <button onClick={this.request} className="btn btn-outline-primary"> <i class="fas fa-arrow-right"></i> {this.props.lang.create.next_button}</button>
+                                            <button onClick={this.request} className="btn btn-outline-primary"> <i className="fas fa-arrow-right"></i> {this.props.lang.create.next_button}</button>
                                         }
                                         
                                     </div>

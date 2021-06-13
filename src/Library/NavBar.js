@@ -22,21 +22,21 @@ export default function NavBar (props) {
                     <div className="collapse navbar-collapse" id="navbarCollapse">
                     <ul className="navbar-nav me-auto mb-2 mb-md-0">
                         <li className="nav-item">
-                            <a className="nav-link active" aria-current="page" href="/">Menu</a>
+                            <a className="nav-link active" aria-current="page" href="/my">Menu</a>
                         </li>
                         <li className="nav-item">
                             <Link to="/products" style={{ textDecoration: 'none' }}>
-                                <a className="nav-link" href="/products">| <i class="fas fa-store"></i> {gProps.lang.main.products}</a>
+                                <a className="nav-link" href="/products"><i class="fas fa-store"></i> {gProps.lang.main.products}</a>
                             </Link>
                         </li>
                         <li className="nav-item">
                             <Link to="/qr" style={{ textDecoration: 'none' }}>
-                                <a className="nav-link" href="/qr">| <i class="fas fa-retweet"></i> Scanner QR</a>
+                                <a className="nav-link" href="/qr"><i class="fas fa-qrcode"></i> Scanner QR/Barre</a>
                             </Link>
                         </li>
                         <li className="nav-item">
                             <Link to="/select" style={{ textDecoration: 'none' }}>
-                                <a className="nav-link" href="/my">| <i class="fas fa-retweet"></i> {gProps.lang.main.change_company}</a>
+                                <a className="nav-link" href="/my"><i class="fas fa-retweet"></i>{gProps.lang.main.change_company}</a>
                             </Link>
                         </li>
                         

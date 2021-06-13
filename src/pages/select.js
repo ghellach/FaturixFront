@@ -63,12 +63,12 @@ class Select extends Component {
                                     <div className="col-12 row">
                                         {this.state.companies.map(company => {
                                             return <div className="col-sm-12 col-md-3">
-                                                <div class="card" style={{width: "100%"}}>
-                                                    <div class="card-body">
-                                                        <h5 class="card-title">{company.name}</h5>
+                                                <div className="card" style={{width: "100%"}}>
+                                                    <div className="card-body">
+                                                        <h5 className="card-title">{company.name}</h5>
                                                         {this.state.loadingCompany === company.uuid 
                                                         ? <button className="btn btn-outline-primary disabled">{this.props.style.loadingIcon} {this.props.lang.select.next_button}</button>
-                                                        : <button className="btn btn-outline-primary" onClick={() => this.selectCompany(company.uuid)}><i class="fas fa-arrow-right"></i> {this.props.lang.select.next_button}</button>
+                                                        : <button className="btn btn-outline-primary" onClick={() => this.selectCompany(company.uuid)}><i className="fas fa-arrow-right"></i> {this.props.lang.select.next_button}</button>
                                                         }
                                                     </div>
                                                 </div>
