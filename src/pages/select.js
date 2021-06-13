@@ -77,9 +77,15 @@ class Select extends Component {
                                         })}
                                         
                                     </div>
-                                    <div className="col-sm-12 col-md-12 text-center" >
+                                    <div className="col-sm-12 col-md-12 text-center" style={{display: "flex",
+                                            justifyContent: "center",
+                                            alignItems: "center",  zIndex: -100}} >
 
-                                        <img src={this.props.APP_URL+"/assets/svg/bgselect.svg"} width="75%" />
+                                        <img src={this.props.APP_URL+"/assets/svg/bgselect.svg"} width="100%" className="fixed-bottom text-center" style={{
+                                            display: "flex",
+                                            justifyContent: "center",
+                                            alignItems: "center"
+                                        }} />
                                 
                                     </div>
                                 </div>

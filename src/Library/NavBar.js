@@ -25,19 +25,13 @@ export default function NavBar (props) {
                             <a className="nav-link active" aria-current="page" href="/my">Menu</a>
                         </li>
                         <li className="nav-item">
-                            <Link to="/products" style={{ textDecoration: 'none' }}>
-                                <a className="nav-link" href="/products"><i class="fas fa-store"></i> {gProps.lang.main.products}</a>
-                            </Link>
+                            <a className="nav-link" href="/products"><i class="fas fa-store"></i> {gProps.lang.main.products}</a>
                         </li>
                         <li className="nav-item">
-                            <Link to="/qr" style={{ textDecoration: 'none' }}>
-                                <a className="nav-link" href="/qr"><i class="fas fa-qrcode"></i> Scanner QR/Barre</a>
-                            </Link>
+                            <a className="nav-link" href="/qr"><i class="fas fa-qrcode"></i> Scanner QR/Barre</a>
                         </li>
                         <li className="nav-item">
-                            <Link to="/select" style={{ textDecoration: 'none' }}>
-                                <a className="nav-link" href="/my"><i class="fas fa-retweet"></i>{gProps.lang.main.change_company}</a>
-                            </Link>
+                            <a className="nav-link" href="/select"><i class="fas fa-retweet"></i>{gProps.lang.main.change_company}</a>
                         </li>
                         
                     </ul>

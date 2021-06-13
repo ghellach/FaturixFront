@@ -41,6 +41,7 @@ const en = {
         next_button: "Access",
     },
     product: {
+        viewDetails: "View details",
         mainBack: "the Products List",
         product: "Product",
         unitPrice: "Unit Price",
@@ -51,7 +52,7 @@ const en = {
         1: "In stock",
         2: "Not in stock",
         3: "Archived",
-        4: "Previous version of product",
+        4: "Previous version of this product",
         5: "Suspended Product",
         actionsType: {
             quantityUpdate: "Quantity update",
@@ -74,7 +75,7 @@ const en = {
         },
         q: {
             savedToCluster: "saved to the cluster successfully !",
-            toProductsPage: "Go to products page",
+            toProductsPage: "Go to the product's page",
             close: "Close",
             saving: "Saving",
             quantity: "Quantity",
@@ -85,6 +86,10 @@ const en = {
             withIndefinite: "Product always availabe",
             withOutOfStock: "Product out of stock",
 
+        },
+        err: {
+            sameQuantity: "The old and the new quantities are the same.",
+            cannotUpdate: "This product cannot be modified."
         }
     }
 }

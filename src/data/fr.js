@@ -40,6 +40,7 @@ const fr = {
         next_button: "Accéder",
     },
     product: {
+        viewDetails: "Détails",
         mainBack: "la liste des produits",
         product: "Produit",
         unitPrice: "Prix unitaire",
@@ -50,7 +51,7 @@ const fr = {
         1: "En stock",
         2: "En rupture de stock",
         3: "Archivé",
-        4: "Version précédente d'un produit",
+        4: "Version précédente de ce produit",
         5: "Produit suspendu",
         actionsType: {
             quantityUpdate: "Mise à jour de la quantité",
@@ -73,7 +74,7 @@ const fr = {
         },
         q: {
             savedToCluster: "enregistré avec succès !",
-            toProductsPage: "Aller à la page des produits",
+            toProductsPage: "Aller à la page du produit",
             close: "Fermer",
             saving: "Entrain d'enregistrer",
             quantity: "Quantités",
@@ -84,6 +85,10 @@ const fr = {
             withIndefinite: "Produit toujours disponible",
             withOutOfStock: "Produit en rupture de stock",
 
+        },
+        err: {
+            sameQuantity: "L'ancienne et la nouvelle quantité sont les mêmes.",
+            cannotUpdate: "Ce produit ne peut être modifié."
         }
     }
 }

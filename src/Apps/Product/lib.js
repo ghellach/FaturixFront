@@ -1,7 +1,23 @@
 import {useState} from 'react';
 import CurrencyInput from 'react-currency-input-field';
 
-export const CommonTaxSelect = props => {
+/*
+    This module is the core of the product application, it has alle requirement
+    such as tax calculations, custom input fiels as well as CRUD management
+
+    1- CommonTaxSelect: tax selector
+    2- CustomTaxField: tax the the user wants to manually add
+    3- (DEPRECATED) taxCalculation: gives the sum of tax
+    4- Converts tax rate to ammount
+    5- FinalStepProcessor: proceeds to object input, update, as well ass quantity management,
+        has also DOM modification abilites to have concordent UI response.
+        Should be bind to a Class Component
+    6- Proceeds to commiting quantity update to product and returs appropriate error
+        if exists
+    7- statusDomObject: returns quantity in a beautiful sticker
+*/
+
+export function CommonTaxSelect (props) {
     const taxes = props.taxes;
 
     return (
@@ -23,7 +39,7 @@ export const CommonTaxSelect = props => {
     )
 }
 
-export const CustomTaxField = props => {
+export function CustomTaxField (props) {
 
     const [saved, setSaved] = useState(true);
 
@@ -83,13 +99,13 @@ export const CustomTaxField = props => {
 
 // real lib
 
-const taxCalculation = taxes => {
+function taxCalculation (taxes) {
     let sum = 0;
     taxes.forEach(tax => sum = sum + tax.rate);
     return sum;
 }
 
-export const taxRateToAmmount = product => {
+export function taxRateToAmmount (product) {
     const rate = taxCalculation(product.unitTaxes);
     const {unitPrice} = product;
     return {
@@ -110,12 +126,15 @@ export async function FinalStepProcessor (which, step, e, onlyQuantity) {
     else return;
 
     if(step === 1) {
+        // sets timer to wait for second click
         this.setState({[button]: true});
         setTimeout(() => this.setState({[button]: false}), 2000);
     }
     else if(step === 2) {
+        // sets UI, and status to be submitted to quantityUpdater
         this.setState({submitting: true, status: which === 4 ? 1 : which === 1 ? 1 : 0, quantity: which === 4 ? 0 : this.state.quantity});
-        setTimeout(() => {}, 10000);
+
+        // prepares body for request
         const body = {
             name: this.state?.name, 
             unitPrice: this.state?.unitPrice,
@@ -135,6 +154,7 @@ export async function FinalStepProcessor (which, step, e, onlyQuantity) {
         }
         try {
             if(onlyQuantity) {
+                // will not use body if requesting function wants only quantity update
                 const uuid = this.state.product.uuid;
                 await this.quantityUpdater(uuid, which);
                 this.setState({nextBlock: uuid});
@@ -144,7 +164,23 @@ export async function FinalStepProcessor (which, step, e, onlyQuantity) {
                 else this.setState({nextBlock: res.data.uuid})
             }
             setTimeout(() => this.setState({allDone: true}), 2000);
-        }catch(err) {console.log(err.response); this.setState({submitting: false})}
+        }catch(err) {
+            if(err?.response?.data?.section === "product") {
+                const e = err?.response?.data?.code;
+                if(e === "sameState") {
+                    this.setState({modalAlert: this.props.lang.product.err.sameQuantity, modalAlertSet: true});
+                }else if(e === "cannotUpdate") {
+                    this.setState({modalAlert: this.props.lang.product.err.cannotUpdate, modalAlertSet:true})
+                }else {
+                    this.setState({modalAlert: this.props.lang.main.serverError, modalAlertSet: true})
+                }
+            }
+            else {
+                this.setState({modalAlert: this.props.lang.main.serverError, modalAlertSet: true})
+            }
+            
+            this.setState({submitting: false})
+        }
     } 
     else return
 
@@ -173,6 +209,7 @@ export function statusDomObject (status, quantity, langVars) {
     if (status === 0) dom = ["success", langVars[0], <i class="fas fa-check"></i>];
     if (status === 1) dom = ["success", quantity+" "+langVars[1], <i class="fas fa-check"></i>];
     if (status === 2) dom = ["danger", langVars[2], <i className="fas fa-exclamation-triangle"></i>];
+    if (status === 4) dom = ["warning", langVars[4], <i class="fas fa-archive"></i>];
     if (status === 3) dom = ["warning", langVars[3], <i class="fas fa-archive"></i>];
     if (status === 5) dom = ["warning", langVars[5], <i className="fas fa-exclamation-triangle"></i>];
     return <h5><span class={"badge bg-"+dom[0]}>{dom[2]} {dom[1]}</span></h5>;

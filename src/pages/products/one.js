@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import {Redirect, Link, withRouter} from 'react-router-dom';
+import {Redirect, withRouter, Link} from 'react-router-dom';
 import QRCode from "react-qr-code";
-import {taxRateToAmmount, statusDomObject, FinalStepProcessor, quantityUpdater} from '../../Apps/Product/lib.js';
+import {statusDomObject, FinalStepProcessor, quantityUpdater} from '../../Apps/Product/lib.js';
 import Assesment from '../../Apps/Product/Assesment.js';
 import ModalQuantity from '../../Apps/Product/ModalQuantity';
 
@@ -15,6 +15,10 @@ export class Product extends Component {
             loaded: true,
             viewing: true,
 
+            // modal syystem
+            modalAlert: null,
+            modalAlertSet: false,
+
 
             // for quantity updater
             finiteButton: false,
@@ -25,7 +29,6 @@ export class Product extends Component {
             status: 0,
         }
 
-        this.ModalQuantity = ModalQuantity.bind(this);
         this.finalButton = FinalStepProcessor.bind(this);
         this.quantityUpdater = quantityUpdater.bind(this);
     }
@@ -46,7 +49,6 @@ export class Product extends Component {
     }
 
     taxRateToAmmount = product => {
-        console.log(product);
         const rate = this.taxCalculation(product.unitTaxes);
         const {unitPrice} = product;
         return {
@@ -72,6 +74,21 @@ export class Product extends Component {
                 {this.state.loaded ? 
                     this.state.viewing ?
                     <div className="row">
+                        <ModalQuantity
+                            newProduct={false}
+                            name={this.state.product.name}
+                            allDone={this.state.allDone}
+                            submitting={this.state.submitting}
+                            allowBack={true}
+                            onChange={this.onChange}
+                            finiteButton={this.state.finiteButton}
+                            infiniteButton={this.state.infiniteButton}
+                            outOfButton={this.state.outOfButton}
+                            finalButton={this.finalButton} 
+                            status={this.state.product.status}
+                            modalAlertSet={this.state.modalAlertSet}
+                            modalAlert={this.state.modalAlert}
+                        />
                         <div className="col-sm-12 col-md-12">
                             <div className="card">
                                 <div className="card-body">
@@ -83,15 +100,22 @@ export class Product extends Component {
                                             {statusDomObject(product.status, product.quantity, this.props.lang.product)}
                                             <br/>
                                         </div>
-                                        <div className="col-sm-12 col-md-5">
+                                        {this.state.product.status < 3 ? <div className="col-sm-12 col-md-5">
                                             <button className="btn btn-secondary" style={{marginRight: "3px"}} onClick={() => this.viewing(false)}><i class="fas fa-tools"></i> {this.props.lang.product.editProduct}</button>
                                             <button className="btn btn-secondary" onClick={() => {
+                                                this.setState({submitting: false, allDone: false, modalAlert: null, modalAlertSet: false})
                                                 var modal = new window.bootstrap.Modal(document.getElementById("Modal"), {});
                                                 modal.show();
                                             }}>
                                                 <i class="fas fa-boxes"></i> {this.props.lang.product.editQuantity}
                                             </button>
-                                        </div>
+                                        </div> : null}
+                                        {this.state.product.status === 4 ? <div className="col-12">
+                                            <div className="alert alert-danger">
+                                                <i className="fas fa-exclamation-triangle"></i> Ceci est une version de produit utilisé dans des factures précédentes. Pour voir la version actuelle,
+                                                <a className="btn btn-secondary" href={"/product/"+this.state.product.latestBlock} style={{textDecoration: null}}>cliquez ici</a>
+                                            </div>
+                                        </div>: null}
                                     </div>
                                     
                                     <hr/>
@@ -129,7 +153,7 @@ export class Product extends Component {
                                                             <td>{one.createdAt}</td>
                                                             <td>
                                                                 <button className="btn btn-outline-secondary btn-sm">
-                                                                    Afficher les détails
+                                                                    {this.props.lang.product.viewDetails}
                                                                 </button>
                                                             </td>
                                                         </tr>
@@ -146,7 +170,6 @@ export class Product extends Component {
                                 </div>
                             </div>
                         </div>
-                        {this.ModalQuantity()}
                     </div>
                     : <Assesment
                         // data
@@ -157,6 +180,7 @@ export class Product extends Component {
                         unitTaxes={this.state.product.unitTaxes}
                         quantity={this.state.product.quantity}
                         status={this.state.product.status}
+                        nextBlock={this.state?.nextBlock}
                         bufferTaxes={this.state.product.unitTaxes.map(tax => {
                             if(tax.uuid) return {...tax, type: 0, name: tax?.names.en}
                             else return {...tax, type: 1, name: tax?.names.en}

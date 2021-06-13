@@ -1,10 +1,16 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import {Redirect, Link, withRouter} from 'react-router-dom';
+import {withRouter} from 'react-router-dom';
 import CurrencyInput from 'react-currency-input-field';
 import {v4 as uuid} from 'uuid';
 
-import { CommonTaxSelect, CustomTaxField, FinalStepProcessor, quantityUpdater, statusDomObject } from './lib';
+import { 
+    CommonTaxSelect, 
+    CustomTaxField, 
+    FinalStepProcessor, 
+    quantityUpdater, 
+    statusDomObject 
+} from './lib';
 import ModalQuantity from './ModalQuantity';
 
 class Assesment extends Component {
@@ -24,6 +30,10 @@ class Assesment extends Component {
             nextBlock: "",
             allowBack: true,
 
+            // modal system
+            modalAlert: null,
+            modalAlertSet: false,
+
             // data
             name: this.props.name,
             unitPrice: this.props.unitPrice,
@@ -37,7 +47,6 @@ class Assesment extends Component {
             status: this.props.status,
             bufferTaxes: this.props.bufferTaxes
         }
-        this.ModalQuantity = ModalQuantity.bind(this);
         this.finalButton = FinalStepProcessor.bind(this);
         this.quantityUpdater = quantityUpdater.bind(this);
     }
@@ -95,9 +104,12 @@ class Assesment extends Component {
                                                     <div className="col-sm-12 col-md-4">
                                                         <button className="btn btn-secondary" type="button" onClick={() => this.props?.viewing(true)}><i class="fas fa-eye"></i> {this.props.lang.product.viewProduct}</button>
                                                     </div>
+                                                    <br/><br/>
                                                     <hr/>
+                                                    
                                                 </div>
                                             }
+                                            <br/>
                                             <div className="col-md-12 col-lg-6">
 
                                                 <h6>{this.props.lang.product.a.name}</h6>
@@ -173,7 +185,6 @@ class Assesment extends Component {
                                                                     key={uuid()}
                                                                     self={this.state.bufferTaxes[i]}
                                                                     saver={(name, rate) => {
-                                                                        console.log(name, rate)
                                                                         this.setState({bufferTaxes: this.state.bufferTaxes.map((one, j) => {
                                                                             if(i === j) return {...one, name, rate}
                                                                             else return one;
@@ -204,7 +215,21 @@ class Assesment extends Component {
                                 </div>
                             </div>
                         </div>
-                        {this.ModalQuantity()}
+                        <ModalQuantity
+                            newProduct={true}
+                            name={this.state.name}
+                            allDone={this.state.allDone}
+                            allowBack={false}
+                            onChange={this.onChange}
+                            submitting={this.state.submitting}
+                            finiteButton={this.state.finiteButton}
+                            infiniteButton={this.state.infiniteButton}
+                            outOfButton={this.state.outOfButton}
+                            finalButton={this.finalButton}
+                            modalAlertSet={this.state.modalAlertSet}
+                            modalAlert={this.state.modalAlert}
+                            nextBlock={this.state?.nextBlock}
+                        />
                      </div>
                     
                 :<React.Fragment>
