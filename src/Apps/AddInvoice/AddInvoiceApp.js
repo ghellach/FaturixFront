@@ -53,7 +53,6 @@ export class AddInvoiceApp extends Component {
     onChange = e => this.setState({[e.target.name]: e.target.value});
 
     clickedInput = (i, n) => {
-        console.log(i, n);
     }
 
 
@@ -66,7 +65,6 @@ export class AddInvoiceApp extends Component {
         ts.forEach(t => {
             if(i == t.uuid ) final = t;
         });
-        console.log(final);
         return final;
     }
 
@@ -76,14 +74,13 @@ export class AddInvoiceApp extends Component {
         ps.forEach(p =>{
             if (p.uuid === uuid) final = p;
         })
-        console.log(final);
         return final
     }
 
     addToItems = product => {
         this.setState({
-            items: [...this.state.items, {...product, quantity: 2}],
-            products: [...this.state.items, {...product}]
+            items: [...this.state.items, {...product, quantity: 1}],
+            products: [...this.state.products, {...product}]
         }, () => {
             this.invoiceModeller(this.state.currency, this.state.items, this.state.taxes, false, false)
         });
@@ -93,11 +90,20 @@ export class AddInvoiceApp extends Component {
     ///////
 
     changeQuantity = (i, q) => this.setState({items: this.state.items.map((item, j) => i === j ? {...item, quantity: q} : item)}, () => {
+        
         this.invoiceModeller(this.state.currency, this.state.items, this.state.taxes, false, false)
     });
-    saveBuffer = (i, buffer) => this.setState({items: this.state.items.map((item, j) => i === j ? buffer : item)}, () => {
-        this.invoiceModeller(this.state.currency, this.state.items, this.state.taxes, false, false)
-    });
+    saveBuffer = (i, buffer) => {
+        console.log(buffer);
+        const products = this.state.products.map((p, j) => i === j ? Object({
+            ...p,
+            quantity: buffer.quantity,
+            unitPrice: buffer.unitPrice ? buffer.unitPrice : p.unitPrice,
+        }) : p)
+        this.setState({products}, 
+            () => this.invoiceModeller(this.state.currency, this.state.items, this.state.taxes, false, false)
+        )
+    };
 
     render() {
 
@@ -114,6 +120,7 @@ export class AddInvoiceApp extends Component {
                             i={i} 
                             changeQuantity={this.changeQuantity}
                             saveBuffer={this.saveBuffer}
+                            currency={this.state.currency}
                         />
                     })} 
                 </ul>

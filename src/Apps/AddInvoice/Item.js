@@ -5,12 +5,14 @@ export default function Item (props) {
 
     const item = props.item;
 
-    const [buffer, setBuffer] = useState({...item});
+    const [buffer, setBuffer] = useState({
+        ...item,
+        unitPrice: Number(item.unit?.subTotal)
+    });
 
     const clearBuffer = () => setBuffer({...item});
     
     const modal = () => {
-        console.log(buffer)
         return <div  className="modal fade" id={"item"+String(props.i)} aria-hidden="true" aria-labelledby={"#"+props.i} tabindex="-1">
             <div className="modal-dialog modal-dialog-centered" >
                 <div className="modal-content" style={{borderRadius: "2rem"}}>
@@ -20,9 +22,9 @@ export default function Item (props) {
                     </div>
                     <div className="modal-body">
 
-                        <h6>Produit</h6>
+                        {/*<h6>Produit</h6>
                         <input value={buffer.name} onChange={(e) => setBuffer({...buffer, name: e.target.value})} className="form-control" style={{borderRadius: "1rem"}}></input>
-                        <br/>
+                        <br/>*/}
 
                         <h6>Prix</h6>
                         <CurrencyInput
@@ -30,14 +32,13 @@ export default function Item (props) {
                             class="form-control"
                             prefix="$"
                             decimalSeparator="." groupSeparator=","
-                            placeholder="$0"
+                            placeholder={props.currency.isoSign+buffer.unit?.subTotal}
                             decimalsLimit={2}
-                            defaultValue={buffer.unitPrice}
-                            onChangeValue={(e) => setBuffer({...buffer, unitPrice: e.target.value})} 
+                            onValueChange={(unitPrice, d) => setBuffer({...buffer, unitPrice: Number(unitPrice)})} 
                         />
                         <br/>
 
-                        <h6>Taxe</h6>
+                        {/*<h6>Taxe</h6>
                         <CurrencyInput
                             style={{borderRadius: "1rem"}}
                             class="form-control"
@@ -48,10 +49,10 @@ export default function Item (props) {
                             defaultValue={buffer.unitTax}
                             onChangeValue={(e) => setBuffer({...buffer, unitTax: e.target.value})} 
                         />
-                        <br/>
+                        <br/>*/}
 
                         <h6>Quantité</h6>
-                        <input type="number" pattern="[0-9]*" value={buffer.quantity} onChange={(e) => setBuffer({...buffer, quantity: e.target.value})} className="form-control" style={{borderRadius: "1rem"}}></input>
+                        <input type="number" pattern="[0-9]*" value={buffer.quantity} onChange={(e) => setBuffer({...buffer, quantity: Number(e.target.value), unitPrice: Number(buffer.unitPrice)})} className="form-control" style={{borderRadius: "1rem"}}></input>
                         <br/>
 
                     </div>

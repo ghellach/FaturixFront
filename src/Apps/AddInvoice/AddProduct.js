@@ -19,7 +19,7 @@ class AddProduct extends React.Component {
         if(name !== "") {
             this.props.post("/product/search", {search: String(name), currency: this.props.currency.uuid}).
             then(res => this.setState({results: res.data}))
-            .catch(err => console.log(err));
+            .catch(err => this.props.errorParser(err));
         }else this.setState({results: []})
     }
 

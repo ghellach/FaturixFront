@@ -17,7 +17,6 @@ export function invoiceModeller (
         let taxesBody = [];
         let rejectT = false;
 
-        console.log(taxes, taxesBody, initialProducts)
 
         // currencty checl
         const currency = cur;
@@ -26,10 +25,8 @@ export function invoiceModeller (
         initialTaxes.map( tax => {
             if(rejectT) return;
             const fetch = this.taxProvider(tax);
-            console.log(fetch);
             if(!fetch) {
                 rejectT = true;
-                console.log(tax);
                 return errorHandler("badParams");
             }else {
                 taxes.push(fetch.uuid);
@@ -44,10 +41,8 @@ export function invoiceModeller (
             // prevent crash by checking previous error
             if(rejectP) return false;
 
-            console.log("fuck");
 
             const product = this.productProvider(ident.uuid);
-            console.log(product);
             if(!product) {
                 rejectP = true;
                 return errorHandler("notAvailable");
@@ -109,7 +104,6 @@ export function invoiceModeller (
                         }
                     }),
                     otherTaxes: otherTaxCal.map(t => {
-                        console.log(t);
                         return {
                             name: t.name,
                             value: t.value*quantity
