@@ -52,7 +52,7 @@ export default function Item (props) {
                         <br/>*/}
 
                         <h6>Quantité</h6>
-                        <input type="number" pattern="[0-9]*" value={buffer.quantity} onChange={(e) => setBuffer({...buffer, quantity: Number(e.target.value), unitPrice: Number(buffer.unitPrice)})} className="form-control" style={{borderRadius: "1rem"}}></input>
+                        <input type="number" pattern="[0-9]*" value={buffer.quantity} onChange={(e) => setBuffer({...buffer, quantity: Number(e.target.value)})} className="form-control" style={{borderRadius: "1rem"}}></input>
                         <br/>
 
                     </div>

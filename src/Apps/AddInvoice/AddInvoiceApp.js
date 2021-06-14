@@ -78,7 +78,19 @@ export class AddInvoiceApp extends Component {
     }
 
     addToItems = product => {
-        this.setState({
+        let increment = false;
+        let i;
+        let q;
+        this.state.items.forEach((p, j) => {
+            if(p.uuid === product.uuid) {
+                increment = true;
+                i = j;
+                q = p.quantity + 1;
+            };
+        })
+        if(increment) {
+            this.changeQuantity(i, q);
+        } else this.setState({
             items: [...this.state.items, {...product, quantity: 1}],
             products: [...this.state.products, {...product}]
         }, () => {
@@ -89,22 +101,54 @@ export class AddInvoiceApp extends Component {
 
     ///////
 
-    changeQuantity = (i, q) => this.setState({items: this.state.items.map((item, j) => i === j ? {...item, quantity: q} : item)}, () => {
+    changeQuantity = (i, q) => {
+        if(q <= 0) {
+            this.removeItem(i);
+        } else this.setState({items: this.state.items.map((item, j) => i === j ? {...item, quantity: q} : item)}, () => {
         
-        this.invoiceModeller(this.state.currency, this.state.items, this.state.taxes, false, false)
-    });
+            this.invoiceModeller(this.state.currency, this.state.items, this.state.taxes, false, false)
+        });
+    }
+
     saveBuffer = (i, buffer) => {
-        console.log(buffer);
-        const products = this.state.products.map((p, j) => i === j ? Object({
-            ...p,
-            quantity: buffer.quantity,
-            unitPrice: buffer.unitPrice ? buffer.unitPrice : p.unitPrice,
-        }) : p)
-        this.setState({products}, 
-            () => this.invoiceModeller(this.state.currency, this.state.items, this.state.taxes, false, false)
-        )
+        if(buffer.quantity <= 0) {
+            this.removeItem(i);
+        }else {
+            const products = this.state.products.map((p, j) => i === j ? Object({
+                ...p,
+                unitPrice: buffer.unitPrice ? buffer.unitPrice : p.unitPrice,
+            }) : p);
+            const items = this.state.items.map((item, j) => i === j ? Object({
+                ...item,
+                quantity: buffer.quantity,
+            }) : item);
+            this.setState({products, items}, 
+                () => this.invoiceModeller(this.state.currency, this.state.items, this.state.taxes, false, false)
+            )
+        }
+       
     };
 
+    removeItem = i => {
+        let items = [];
+        let products = [];
+        this.state.items.forEach((p, j) => i === j ? null : items.push(p));
+        this.state.products.forEach((p, j) => i === j ? null : products.push(p));
+        this.setState({items, products}, 
+            () => this.invoiceModeller(this.state.currency, this.state.items, this.state.taxes, false, false)
+        )
+    }
+
+    // system management
+
+    saveDraft = () => {
+
+    }
+
+    manageTax = () => {
+        
+    }
+    
     render() {
 
         // redirectors

@@ -25,6 +25,7 @@ class AddProduct extends React.Component {
 
     addToItems = product => {
         this.props.addToItems(product);
+        this.setState({name: "", results: []});
     }
 
     render() {
