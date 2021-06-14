@@ -1,33 +1,53 @@
 import React, { Component, useState } from 'react'
 import { connect } from 'react-redux'
 import {Redirect} from 'react-router-dom';
+import AddProduct from './AddProduct';
 import Item from './Item';
+
+import { invoiceModeller } from './lib';
 
 
 export class AddInvoiceApp extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            items: [
-                {
-                    name: "Cahier Canada 25 pages",
-                    quantity: 4,
-                    unitPrice: 5.00,
-                    unitTax: 14.975,
-                    currency: "CAD"
+            currency: {
+                "isoSign": "$",
+                "uuid": "a29162bd-c6ad-437f-9be4-92fdf3e2e794",
+                "isoName": "CAD"
+            },
+            sums: {
+                grossTotal: 0,
+                subTotal: 0,
+                taxesTotal: 0
+            },
+            grossTaxes: [],
+            taxes: ["52974fbd-4be7-4df8-9363-77c1a2d9ee7c", "93974fbd-6be7-4df8-9363-77c1a2d9t57c"],
+            taxesFull: [ {
+                "names": {
+                    "fr": "TVQ",
+                    "en": "TVQ"
                 },
-                {
-                    name: "Calculatrice Graphique Casio ",
-                    quantity: 4,
-                    unitPrice: 5.00,
-                    unitTax: 14.975,
-                    currency: "CAD"
-                }
-            ]
+                "rate": 9.975,
+                "uuid": "52974fbd-4be7-4df8-9363-77c1a2d9ee7c"
+            },
+            {
+                "names": {
+                    "fr": "TPS",
+                    "en": "TPS"
+                },
+                "rate": 5,
+                "uuid": "93974fbd-6be7-4df8-9363-77c1a2d9t57c"
+            }],
+            items: [],
+            products: [],
         }
+
+        this.invoiceModeller = invoiceModeller.bind(this);
     }
 
     componentDidMount() {
+
     }
 
     onChange = e => this.setState({[e.target.name]: e.target.value});
@@ -36,8 +56,48 @@ export class AddInvoiceApp extends Component {
         console.log(i, n);
     }
 
-    changeQuantity = (i, q) => this.setState({items: this.state.items.map((item, j) => i === j ? {...item, quantity: q} : item)});
-    saveBuffer = (i, buffer) => this.setState({items: this.state.items.map((item, j) => i === j ? buffer : item)});
+
+
+    /////////////
+
+    taxProvider = (i) => {
+        const ts = this.state.taxesFull;
+        let final = {};
+        ts.forEach(t => {
+            if(i == t.uuid ) final = t;
+        });
+        console.log(final);
+        return final;
+    }
+
+    productProvider = uuid => {
+        const ps = this.state.products;
+        let final = {};
+        ps.forEach(p =>{
+            if (p.uuid === uuid) final = p;
+        })
+        console.log(final);
+        return final
+    }
+
+    addToItems = product => {
+        this.setState({
+            items: [...this.state.items, {...product, quantity: 2}],
+            products: [...this.state.items, {...product}]
+        }, () => {
+            this.invoiceModeller(this.state.currency, this.state.items, this.state.taxes, false, false)
+        });
+    }
+
+
+    ///////
+
+    changeQuantity = (i, q) => this.setState({items: this.state.items.map((item, j) => i === j ? {...item, quantity: q} : item)}, () => {
+        this.invoiceModeller(this.state.currency, this.state.items, this.state.taxes, false, false)
+    });
+    saveBuffer = (i, buffer) => this.setState({items: this.state.items.map((item, j) => i === j ? buffer : item)}, () => {
+        this.invoiceModeller(this.state.currency, this.state.items, this.state.taxes, false, false)
+    });
 
     render() {
 
@@ -75,7 +135,10 @@ export class AddInvoiceApp extends Component {
                             <div className="card-body">
                                 {itemsList()}
                                 <hr/>
-                                <button className="btn btn-success"><i className="fas fa-arrow-down"></i> Ajouter un produit à la facture</button>
+                                <button className="btn btn-success" onClick={() => {
+                                    var modal = new window.bootstrap.Modal(document.getElementById("addProduct"), {});
+                                    modal.show();
+                                }} role="button"><i className="fas fa-arrow-down"></i> Ajouter un produit à la facture</button>
                                 {/*<form>
                                     <div className="mb-3">
                                         <label htmlFor="exampleInputEmail1" className="form-label">Email address</label>
@@ -92,6 +155,14 @@ export class AddInvoiceApp extends Component {
                                     </div>
                                     <button type="submit" className="btn btn-primary">Submit</button>
                                 </form>*/}
+                                <hr/>
+                                {this.state.grossTaxes.map(tax => {
+                                    if(tax.uuid) return <h6>{tax.names[this.props.langIso]} ({tax.rate}%): {tax.total.toFixed(2)} {this.state.currency.isoSign}</h6>
+                                    else return <h6>{tax.name}: {tax.total.toFixed(2)} {this.state.currency.isoSign}</h6>
+                                })}
+                                <hr/>
+                                <h6>Sub Total: {this.state.sums.subTotal} {this.state.currency.isoSign}</h6>
+                                <h5>Gross Total: {this.state.sums.grossTotal} {this.state.currency.isoSign}</h5>
                             </div>
                         </div>
                         <br/>
@@ -113,7 +184,10 @@ export class AddInvoiceApp extends Component {
                         </div>
 
                     </div>
-                    
+                    <AddProduct 
+                        currency={this.state.currency} 
+                        addToItems={this.addToItems}
+                    />
                 </div>
 
             </React.Fragment>

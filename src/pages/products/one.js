@@ -24,6 +24,7 @@ export class Product extends Component {
             finiteButton: false,
             infiniteButton: false,
             submitting: false,
+            archiveButton: false,
             allDone: false,
             quantity: 0,
             status: 0,
@@ -137,30 +138,35 @@ export class Product extends Component {
                                             <QRCode value={JSON.stringify({type: "product", uuid: product.uuid})} />
                                         </div>
                                         <div className="col-md-12 col-lg-6">
-                                        <table class="table">
-                                            <thead>
-                                                <tr>
-                                                <th scope="col">Action</th>
-                                                <th>Date</th>
-                                                <th></th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {product?.actionsArchive?.actionsArchive.map(one => {
-                                                    return (
-                                                        <tr>
-                                                            <th scope="row">{this.props.lang.product.actionsType?.[one.type]}</th>
-                                                            <td>{one.createdAt}</td>
-                                                            <td>
-                                                                <button className="btn btn-outline-secondary btn-sm">
-                                                                    {this.props.lang.product.viewDetails}
-                                                                </button>
-                                                            </td>
-                                                        </tr>
-                                                    )
-                                                })}
-                                            </tbody>
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                    <th scope="col">Action</th>
+                                                    <th>Date</th>
+                                                    <th></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {product?.actionsArchive?.actionsArchive.map(one => {
+                                                        return (
+                                                            <tr>
+                                                                <th scope="row">{this.props.lang.product.actionsType?.[one.type]}</th>
+                                                                <td>{one.createdAt}</td>
+                                                                <td>
+                                                                    <button className="btn btn-outline-secondary btn-sm">
+                                                                        {this.props.lang.product.viewDetails}
+                                                                    </button>
+                                                                </td>
+                                                            </tr>
+                                                        )
+                                                    })}
+                                                </tbody>
                                             </table>
+                                            <hr/>
+                                            <h5>Actions: </h5>
+                                            <button className="btn btn-warning">
+                                                Archiver le produit
+                                            </button>
                                         </div>
                                     </div>
                                     

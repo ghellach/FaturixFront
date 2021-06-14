@@ -204,7 +204,7 @@ export async function quantityUpdater (uuid, which) {
 }
 
 
-export function statusDomObject (status, quantity, langVars) {
+export function statusDomObject (status, quantity, langVars, small) {
     let dom = ["secondary", ".", ""];
     if (status === 0) dom = ["success", langVars[0], <i class="fas fa-check"></i>];
     if (status === 1) dom = ["success", quantity+" "+langVars[1], <i class="fas fa-check"></i>];
@@ -212,5 +212,6 @@ export function statusDomObject (status, quantity, langVars) {
     if (status === 4) dom = ["warning", langVars[4], <i class="fas fa-archive"></i>];
     if (status === 3) dom = ["warning", langVars[3], <i class="fas fa-archive"></i>];
     if (status === 5) dom = ["warning", langVars[5], <i className="fas fa-exclamation-triangle"></i>];
-    return <h5><span class={"badge bg-"+dom[0]}>{dom[2]} {dom[1]}</span></h5>;
+    if(small) return <span class={"badge bg-"+dom[0]+ " rounded-pill"}>{dom[2]} {dom[1]}</span>;
+    else return <h5><span class={"badge bg-"+dom[0]}>{dom[2]} {dom[1]}</span></h5>;
 }

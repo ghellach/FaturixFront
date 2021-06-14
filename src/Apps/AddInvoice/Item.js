@@ -70,7 +70,7 @@ export default function Item (props) {
                 <b>{item.name}</b>
             </div>
             <div className="col-md-12 col-lg-5" >
-                Prix: <b style={{fontSize: "1.3rem"}}><u>15.99 $CAD</u></b> <br/> (Taxes: <b>2.39 $CAD</b>) Quantité: <b>{item.quantity}</b>
+                Prix: <b style={{fontSize: "1.3rem"}}><u>{item.unit?.subTotal?.toFixed(2)} $CAD</u></b> <br/> (Taxes: <b>{(item.unit?.total-item.unit?.subTotal).toFixed(2)} $CAD</b>) Quantité: <b>{item.quantity}</b>
             </div>
             <div className="col-md-12 col-lg-3">
                 <button className="btn btn-outline-success" onClick={() => props.changeQuantity(props.i, Number(item.quantity+1))} style={{width: "33%"}}><i className="fas fa-plus"></i> 1</button>
