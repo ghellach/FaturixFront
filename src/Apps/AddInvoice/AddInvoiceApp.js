@@ -31,6 +31,7 @@ export class AddInvoiceApp extends Component {
                 "rate": 9.975,
                 "uuid": "52974fbd-4be7-4df8-9363-77c1a2d9ee7c"
             },
+
             
             {
                 "names": {
