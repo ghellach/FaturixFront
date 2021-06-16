@@ -170,4 +170,34 @@ export function invoiceModeller (
         });
 }
 
+export function SavingModal (props) {
+    return (<div className="modal fade" id="savingModal" tabindex="-1"  data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div className="modal-dialog modal-dialog-centered">
+                    <div style={{borderRadius: "2rem"}} className="modal-content">
+                        {props?.allDone ? 
+                            <div className="modal-body text-center">
+                                <i className="fas fa-check fa-3x" style={{color: "#00db6a"}} />
+                                <br/>
+                                <h4>{props.lang.product.q.savedToCluster}</h4>
+                                <hr/>
+                                <div className="row">
+                                    <div className="col-md-12 col-lg-6">
+                                        <a  className="btn btn-primary" href="/my" style={{width: "100%"}}><i class="fas fa-home"></i> Go to menu</a>
+                                    </div>
+                                    <div className="col-md-12 col-lg-6">
+                                        <a className="btn btn-success" href={"/invoice/"+props.invoiceUuid} style={{width: "100%"}}><i class="fas fa-eye"></i> View invoice</a>
+                                    </div>
+                                </div>
+                            </div>
+                            : <div className="modal-body text-center">
+                                <img src={props.APP_URL+"/assets/icons/loaderyes.gif"} width="300px" />
+                                <h4>{props.lang.product.q.saving} ...</h4>
+                                <br/>
+                            </div>
+                        } 
+                    </div>
+            </div>
+        </div>);
+}
+
 

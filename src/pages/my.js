@@ -38,7 +38,7 @@ export class My extends Component {
                             <h3>{this.props.lang.my.one} {this.props.company.name}</h3>
                         </div>
                         <div className="col-sm-12 col-md-4">
-                            <Link to="/invoice/new" style={{ textDecoration: 'none' }}>
+                            <Link to="/invoices/new" style={{ textDecoration: 'none' }}>
                                 <div className="card" style={{borderWidth: "0px"}}>
                                     <div className="card-body" style={{borderWidth: "0px", backgroundImage:"linear-gradient(45deg, #4ad8ff, #5472d6)"}}>
                                         <i style={{color: "white"}} className="fas fa-file-invoice fa-6x"></i>

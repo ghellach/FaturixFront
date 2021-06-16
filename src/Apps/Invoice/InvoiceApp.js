@@ -1,16 +1,26 @@
 import React, { Component, useState } from 'react'
 import { connect } from 'react-redux'
 import {Redirect} from 'react-router-dom';
+
+// components
 import AddProduct from './AddProduct';
+import AddTax from './AddTax';
 import Item from './Item';
 
-import { invoiceModeller } from './lib';
+import { invoiceModeller, SavingModal } from './lib';
 
 
-export class AddInvoiceApp extends Component {
+export class InvoiceApp extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            //system
+            error: null,
+            allDone: false,
+            invoiceUuid: "",
+
+
+            // content
             currency: {
                 "isoSign": "$",
                 "uuid": "a29162bd-c6ad-437f-9be4-92fdf3e2e794",
@@ -22,33 +32,28 @@ export class AddInvoiceApp extends Component {
                 taxesTotal: 0
             },
             grossTaxes: [],
-            taxes: ["52974fbd-4be7-4df8-9363-77c1a2d9ee7c", "93974fbd-6be7-4df8-9363-77c1a2d9t57c"],
-            taxesFull: [ {
-                "names": {
-                    "fr": "TVQ",
-                    "en": "TVQ"
-                },
-                "rate": 9.975,
-                "uuid": "52974fbd-4be7-4df8-9363-77c1a2d9ee7c"
-            },
-            
-            {
-                "names": {
-                    "fr": "TPS",
-                    "en": "TPS"
-                },
-                "rate": 5,
-                "uuid": "93974fbd-6be7-4df8-9363-77c1a2d9t57c"
-            }],
+            taxes: [],
+            taxesFull: [],
             items: [],
             products: [],
+            customerEmail: "",
+            customerPhone: ""
         }
 
         this.invoiceModeller = invoiceModeller.bind(this);
     }
 
     componentDidMount() {
-
+        if(this.props.invoiceUuid) this.setState({
+            uuid: this.props.invoiceUuid,
+            currency: this.props.currency,
+            taxes: this.props.taxes,
+            taxesFull: this.props.taxesFull,
+            items: this.props.items,
+            products: this.props.products,
+            customerEmail: this.props.customerDetails?.email,
+            customerPhone: this.props.customerDetails?.phone,
+        }, () => this.invoiceModeller(this.state.currency, this.state.items, this.state.taxes, false, false))
     }
 
     onChange = e => this.setState({[e.target.name]: e.target.value});
@@ -142,12 +147,57 @@ export class AddInvoiceApp extends Component {
 
     // system management
 
-    saveDraft = () => {
-
+    selectTax = tax => {
+        const uuid = tax.uuid;
+        let continuer = true;
+        this.state.taxes.forEach(t => t === uuid ? continuer = false : null);
+        if(continuer) this.setState({taxes: [...this.state.taxes, tax.uuid], taxesFull: [...this.state.taxesFull, tax]}, 
+            () => this.invoiceModeller(this.state.currency, this.state.items, this.state.taxes, false, false)
+        )
     }
 
-    manageTax = () => {
+    removeTax = uuid => {
+        let i;
+        let taxes = [];
+        this.state.taxes.forEach((tax, j) => {
+            if(tax === uuid) i = j;
+            else taxes.push(tax);
+        });
+        let taxesFull = [];
+        this.state.taxesFull.forEach((t, j) => i === j ? null : taxesFull.push(t));
+        this.setState({taxes, taxesFull}, 
+            () => this.invoiceModeller(this.state.currency, this.state.items, this.state.taxes, false, false)
+        );
+    }
+
+    setError = error => this.setState({error});
+    onChange = e => this.setState({[e.target.name]: e.target.value});
+
+    // http coms
+
+    saveDraft = () => {
+        var modal = new window.bootstrap.Modal(document.getElementById("savingModal"), {});
+        modal.show();
+
+        const taxes = [];
+        this.state.grossTaxes.map(tax => tax.uuid ? taxes.push(tax.uuid) : null);
         
+        const body = {
+            invoice: this.props.invoiceUuid ? this.props.invoiceUuid : undefined,
+            products: this.state.items,
+            currency: this.state.currency.uuid,
+            taxes,
+            customerDetails: {
+                email: this.state.customerEmail,
+                phone: this.state.customerPhone
+            }
+        }
+        console.log(body);
+
+        this.props.post("/invoice/draft", body)
+        .then(res => this.setState({invoiceUuid: res.data.invoice}))
+        .catch(err => console.log(err.response.data));
+        setTimeout(() => this.setState({allDone: true}), 1000);
     }
     
     render() {
@@ -181,6 +231,7 @@ export class AddInvoiceApp extends Component {
                     <br/>
                     <div className="col-12">
                         <h3>Ajouter une nouvelle facture pour un client</h3>
+                        {this.state.error ? <div className="alert alert-danger">{this.state.error}</div> : null}
                     </div>
                     <div className="col-md-12 col-lg-9">
                         <div className="card">
@@ -209,12 +260,27 @@ export class AddInvoiceApp extends Component {
                                 </form>*/}
                                 <hr/>
                                 {this.state.grossTaxes.map(tax => {
-                                    if(tax.uuid) return <h6>{tax.names[this.props.langIso]} ({tax.rate}%): {tax.total.toFixed(2)} {this.state.currency.isoSign}</h6>
-                                    else return <h6>{tax.name}: {tax.total.toFixed(2)} {this.state.currency.isoSign}</h6>
+                                    if(tax.uuid) return <h6>
+                                        {tax.names[this.props.langIso]} ({tax.rate}%): {tax.total.toFixed(2)} {this.state.currency.isoSign} <button onClick={() => this.removeTax(tax.uuid)} className="btn btn-outline-danger btn-sm" style={{borderRadius:"4rem"}}>
+                                            <i className="fas fa-minus"/>
+                                        </button>
+                                    </h6>
+                                    else return <h6>
+                                        {tax.name}: {tax.total.toFixed(2)} {this.state.currency.isoSign}
+                                    </h6>
                                 })}
+                                {this.state.items.length !== 0 ? <button className="btn btn-primary btn-sm" onClick={() => {
+                                    var modal = new window.bootstrap.Modal(document.getElementById("addTax"), {});
+                                    modal.show();
+                                }}>
+                                    <i className="fas fa-plus"/>Add tax
+                                    </button> 
+                                : null }
                                 <hr/>
                                 <h6>Sub Total: {this.state.sums.subTotal} {this.state.currency.isoSign}</h6>
                                 <h5>Gross Total: {this.state.sums.grossTotal} {this.state.currency.isoSign}</h5>
+                        
+                                
                             </div>
                         </div>
                         <br/>
@@ -222,16 +288,36 @@ export class AddInvoiceApp extends Component {
                     <div className="col-md-12 col-lg-3">
                         <div className="card">
                             <div className="card-body d-grid gap-2">
+                                <h4>Informations du client</h4>
+                                <h6>Phone number: <input className="form-control" name="customerPhone" value={this.state.customerPhone} onChange={this.onChange} type="text" style={{borderRadius: "2rem"}}/></h6>
+                                <h6>Email address: <input className="form-control" name="customerEmail" value={this.state.customerEmail} onChange={this.onChange} type="email" style={{borderRadius: "2rem"}}/></h6>
+                                
+                                <hr/>
                                 <h4>Options</h4>
-                                <button className="btn btn-outline-primary">
-                                    <i className="far fa-save"></i> Enregister comme brouillon
-                                </button>
-                                <button className="btn btn-primary">
-                                    <i className="fas fa-save"></i> Enregister la facture
-                                </button>
-                                <button className="btn btn-success">
-                                    <i className="fas fa-share-square"></i> Enregister et envoyer au client
-                                </button>
+                                {this.state.products.length === 0 ? <React.Fragment>
+                                    <button className="btn btn-outline-primary" disabled>
+                                        <i className="far fa-save"></i> Enregister comme brouillon
+                                    </button>
+                                    <button className="btn btn-primary" disabled>
+                                        <i className="fas fa-save"></i> Enregister la facture
+                                    </button>
+                                    <button className="btn btn-success" disabled>
+                                        <i className="fas fa-share-square"></i> Enregister et envoyer au client
+                                    </button> 
+                                </React.Fragment>
+                                
+                                :<React.Fragment> 
+                                    <button onClick={this.saveDraft} className="btn btn-outline-primary">
+                                        <i className="far fa-save"></i> Enregister comme brouillon
+                                    </button>
+                                    <button className="btn btn-primary">
+                                        <i className="fas fa-save"></i> Enregister la facture
+                                    </button>
+                                    <button className="btn btn-success">
+                                        <i className="fas fa-share-square"></i> Enregister et envoyer au client
+                                    </button> 
+                                </React.Fragment>}
+
                             </div>
                         </div>
 
@@ -239,6 +325,17 @@ export class AddInvoiceApp extends Component {
                     <AddProduct 
                         currency={this.state.currency} 
                         addToItems={this.addToItems}
+                    />
+                    <AddTax
+                        selectTax={this.selectTax}
+                        setError={this.setError}
+                        usedTaxes={this.state.taxes}
+                    />
+                    <SavingModal
+                        allDone={this.state.allDone}
+                        lang={this.props.lang}
+                        APP_URL={this.props.APP_URL}
+                        invoiceUuid={this.state.invoiceUuid}
                     />
                 </div>
 
@@ -257,4 +354,4 @@ const mapDispatchToProps = dispatch => {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(AddInvoiceApp);
+export default connect(mapStateToProps, mapDispatchToProps)(InvoiceApp);

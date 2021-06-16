@@ -1,7 +1,7 @@
 import React, { Component, useState } from 'react'
 import { connect } from 'react-redux'
 import {Redirect} from 'react-router-dom';
-import AddInvoiceApp from '../../Apps/AddInvoice/AddInvoiceApp';
+import InvoiceApp from '../../Apps/Invoice/InvoiceApp';
 
 
 export class AddInvoice extends Component {
@@ -46,7 +46,7 @@ export class AddInvoice extends Component {
         
             <React.Fragment>
                 {this.state.loaded ? 
-                    <AddInvoiceApp />
+                    <InvoiceApp />
                 :<React.Fragment>
                     <this.props.loadingComp/>
                 </React.Fragment>

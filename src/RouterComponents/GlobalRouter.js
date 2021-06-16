@@ -9,6 +9,7 @@ import Logout from '../pages/logout';
 import Login from '../pages/login';
 import My from '../pages/my';
 import AddInvoice from '../pages/invoice/add';
+import Invoice from '../pages/invoice/one';
 import Create from '../pages/create';
 import Select from '../pages/select';
 import SelectionCheck from '../Library/SelectionCheck';
@@ -54,9 +55,14 @@ export default function GlobalRouter () {
                                     <My/>
                                 </Route>
 
-                                <Route exact="true" path="/invoice/new">
+                                <Route exact="true" path="/invoices/new">
                                     <AddInvoice/>
                                 </Route>
+
+                                <Route exact="true" path="/invoice/:uuid">
+                                    <Invoice/>
+                                </Route>
+
 
                                 {/*Products*/}
                                 <Route exact="true" path="/products">
