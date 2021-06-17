@@ -52,6 +52,8 @@ class Invoice extends Component {
                         products={this.state.products}
                         finalized={this.state.finalized}
                         paid={this.state.paid}
+                        reduction={this.state.reduction}
+                        notes={this.state.notes}
                         createdAt={this.state.createdAt}
                         updatedAt={this.state.updatedAt}
                         customerDetails={this.state.customerDetails}

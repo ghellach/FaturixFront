@@ -1,13 +1,14 @@
 import React, { Component, useState } from 'react'
 import { connect } from 'react-redux'
 import {Redirect} from 'react-router-dom';
+import CurrencyInput from 'react-currency-input-field';
 
 // components
 import AddProduct from './AddProduct';
 import AddTax from './AddTax';
 import Item from './Item';
 
-import { invoiceModeller, SavingModal } from './lib';
+import { invoiceModeller, SavingModal, modelInvoice } from './lib';
 
 
 export class InvoiceApp extends Component {
@@ -36,11 +37,13 @@ export class InvoiceApp extends Component {
             taxesFull: [],
             items: [],
             products: [],
+            reduction: null,
             customerEmail: "",
             customerPhone: ""
         }
 
         this.invoiceModeller = invoiceModeller.bind(this);
+        this.modelInvoice = modelInvoice.bind(this);
     }
 
     componentDidMount() {
@@ -53,6 +56,8 @@ export class InvoiceApp extends Component {
             products: this.props.products,
             customerEmail: this.props.customerDetails?.email,
             customerPhone: this.props.customerDetails?.phone,
+            notes: this.props.notes,
+            reduction: this.props.reduction
         }, () => this.invoiceModeller(this.state.currency, this.state.items, this.state.taxes, false, false))
     }
 
@@ -170,6 +175,17 @@ export class InvoiceApp extends Component {
         );
     }
 
+    // reduction
+    addReduction = () => this.setState({reduction: {type: 0, payload: 0}}, this.modelInvoice)
+    
+    removeReduction = () => this.setState({reduction: null}, this.modelInvoice);
+
+    changeRed = e => this.setState({reduction: {...this.state.reduction, 
+        [e.target.name]: e.target.value === "" ? "" : Number(e.target.value)
+    }}, this.modelInvoice);
+
+    // system
+
     setError = error => this.setState({error});
     onChange = e => this.setState({[e.target.name]: e.target.value});
 
@@ -190,7 +206,11 @@ export class InvoiceApp extends Component {
             customerDetails: {
                 email: this.state.customerEmail,
                 phone: this.state.customerPhone
-            }
+            },
+            reduction: this.state.reduction ? {
+                type: this.state.reduction.type,
+                payload: this.state.reduction.payload
+            } : undefined
         }
         console.log(body);
 
@@ -199,6 +219,7 @@ export class InvoiceApp extends Component {
         .catch(err => console.log(err.response.data));
         setTimeout(() => this.setState({allDone: true}), 1000);
     }
+
     
     render() {
 
@@ -269,12 +290,57 @@ export class InvoiceApp extends Component {
                                         {tax.name}: {tax.total.toFixed(2)} {this.state.currency.isoSign}
                                     </h6>
                                 })}
-                                {this.state.items.length !== 0 ? <button className="btn btn-primary btn-sm" onClick={() => {
-                                    var modal = new window.bootstrap.Modal(document.getElementById("addTax"), {});
-                                    modal.show();
-                                }}>
-                                    <i className="fas fa-plus"/>Add tax
-                                    </button> 
+                                {this.state.items.length !== 0 ? 
+                                <React.Fragment>
+                                    <button className="btn btn-primary btn-sm" onClick={() => {
+                                        var modal = new window.bootstrap.Modal(document.getElementById("addTax"), {});
+                                        modal.show();
+                                    }}>
+                                        <i className="fas fa-plus"/> Add tax
+                                    </button> <hr/>
+                                    {this.state.reduction ?
+                                        <React.Fragment>
+                                            <h5>Reduction</h5>
+                                            <div className="row">
+                                                <div className="col-md-6 col-lg-4">
+                                                    <select required className="form-control" name="type" onChange={this.changeRed} value={this.state.reduction?.type} style={{borderRadius: "2rem"}}>
+                                                        <option value="0">Percentage (%)</option>
+                                                        <option value="1">Amount {this.state.currency.isoSign}</option>
+                                                    </select>
+                                                </div>
+                                                <div className="col-md-6 col-lg-4">
+                                                    {this.state.reduction?.type >= 0 ? 
+                                                    <CurrencyInput
+                                                        style={{borderRadius: "2rem"}}
+                                                        className="form-control"
+                                                        prefix={this.state.reduction?.type === 0 ? "%" : this.state.reduction?.type === 1 ? "$" : null}
+                                                        name="payload"
+                                                        max={100}
+                                                        defaultValue={this.state.reduction?.payload}
+                                                        decimalSeparator="." groupSeparator=""
+                                                        placeholder={this.state.reduction?.type === 0 ? "%" : this.state.reduction?.type === 1 ? "$" : null + `Value`}
+                                                        decimalsLimit={3}
+                                                        allowNegativeValue={false}
+                                                        required={true}
+                                                        onValueChange={(value, name) => this.changeRed({target: {name, value: value ? Number(value) : 0}})}
+                                                    />
+                                                    : <input required className="form-control" name="payload"  type="number" disabled placeholder="Value" style={{borderRadius: "2rem"}}/>
+                                                    }
+                                                    
+                                                </div>
+                                                <div className="col-md-12 col-lg-4">
+                                                    <button className="btn btn-danger" onClick={this.removeReduction}>
+                                                        <i className="fas fa-times"/> Remove
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </React.Fragment>
+                                        : 
+                                        <button className="btn btn-outline-primary btn-sm" onClick={this.addReduction}>
+                                            <i className="fas fa-plus"/> Add reduction
+                                        </button>
+                                    }
+                                </React.Fragment>
                                 : null }
                                 <hr/>
                                 <h6>Sub Total: {this.state.sums.subTotal} {this.state.currency.isoSign}</h6>

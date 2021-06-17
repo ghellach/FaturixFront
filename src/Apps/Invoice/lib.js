@@ -1,5 +1,9 @@
 const errorHandler =(e, r) => console.log(e);
 
+
+export function modelInvoice () {return this.invoiceModeller(this.state.currency, this.state.items, this.state.taxes, false, false) };
+
+
 export function invoiceModeller ( 
     cur, 
     initialProducts, 
@@ -150,6 +154,18 @@ export function invoiceModeller (
         products.forEach(p => subTotal = subTotal + p.total.subTotal);
         let grossTotal = subTotal + taxesTotal;
 
+        if(this.state.reduction) {
+            if(this.state.reduction?.type === 0) {
+                if(this.state.reduction?.payload <= 0) grossTotal = grossTotal;
+                else if(this.state.reduction?.payload >= 100) grossTotal = 0;
+                grossTotal = grossTotal * 0.01*(100-Number(this.state.reduction.payload))
+            }
+            else if (this.state.reduction?.type === 1) {
+                if(this.state.reduction.payload >= grossTotal) grossTotal = 0
+                else grossTotal = grossTotal - Number(this.state.reduction.payload)
+            }
+        }
+
         const body = {
             currency: currency.uuid,
             sums: {
@@ -199,5 +215,6 @@ export function SavingModal (props) {
             </div>
         </div>);
 }
+
 
 
