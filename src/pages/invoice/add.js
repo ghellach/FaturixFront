@@ -9,20 +9,7 @@ export class AddInvoice extends Component {
         super(props);
         this.state = {
             items: [
-                {
-                    name: "Cahier Canada 25 pages",
-                    quantity: "4",
-                    unitPrice: 5.00,
-                    unitTax: 14.975,
-                    currency: "CAD"
-                },
-                {
-                    name: "Calculatrice Graphique Casio ",
-                    quantity: "4",
-                    unitPrice: 5.00,
-                    unitTax: 14.975,
-                    currency: "CAD"
-                }
+                
             ]
         }
     }

@@ -37,7 +37,7 @@ export class My extends Component {
                             <h4>{this.props.lang.my.top(this.props.user.firstName)}</h4>
                             <h3>{this.props.lang.my.one} {this.props.company.name}</h3>
                         </div>
-                        <div className="col-sm-12 col-md-4">
+                        <div className="col-sm-12 col-md-3">
                             <Link to="/invoices/new" style={{ textDecoration: 'none' }}>
                                 <div className="card" style={{borderWidth: "0px"}}>
                                     <div className="card-body" style={{borderWidth: "0px", backgroundImage:"linear-gradient(45deg, #4ad8ff, #5472d6)"}}>
@@ -59,10 +59,54 @@ export class My extends Component {
                            
                             
                         </div>
-                        <div className="col-sm-12 col-md-8">
+                        <div className="col-sm-12 col-md-9">
                             <div className="card">
                                 <div className="card-body">
-                                    
+                                    <div className="table-responsive">
+                                        <table className="table">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">#</th>
+                                                    <th scope="col">Client</th>
+                                                    <th scope="col">Total</th>
+                                                    <th scope="col">Produits</th>
+                                                    <th scope="col">Faite le</th>
+                                                    <th scope="col"></th>
+                                                    <th scope="col"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            {this.state.invoices.map(invoice => {
+                                                const {customer, sums, currency} = invoice;
+                                                return(
+                                                    <tr>
+                                                        <th scope="row">{invoice.number}</th>
+                                                        <td>{customer.name ? customer.name : customer.phone ? customer.phone : customer.email}</td>
+                                                        <td>{sums.grossTotal} {currency.isoSign}</td>
+                                                        <td>{invoice.productsCount}</td>
+                                                        <td>{invoice.uuids}</td>
+                                                        <td>
+                                                            {
+                                                                invoice.refunded 
+                                                                ? <span style={{width: "100%"}} className="btn btn-success btn-sm"><i class="fas fa-undo-alt"></i> Remboursée</span>
+                                                                : 
+                                                                invoice.finalized 
+                                                                ? <span style={{width: "100%"}} className="btn btn-success btn-sm"><i class="fas fa-check"></i> Finalisée</span>
+                                                                : <span style={{width: "100%"}} className="btn btn-secondary btn-sm"><i class="fas fa-truck-loading"></i> En cours</span>
+                                                            }
+                                                        </td>
+                                                        <td>
+                                                            <Link to={"/invoice/"+invoice.uuid}>
+                                                                <button style={{width: "100%"}} className="btn btn-secondary btn-sm"><i class="fas fa-eye"></i> Afficher</button>
+                                                            </Link>
+                                                        </td>
+                                                    </tr>
+                                                )
+                                            })}
+                                            </tbody>
+                                        </table>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>

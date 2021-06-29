@@ -2,6 +2,7 @@ import React, { Component, useState } from 'react'
 import { connect } from 'react-redux'
 import {Redirect, withRouter} from 'react-router-dom';
 import InvoiceApp from '../../Apps/Invoice/InvoiceApp';
+import InvoiceViewApp from '../../Apps/Invoice/InvoiceViewApp';
 
 
 class Invoice extends Component {
@@ -25,7 +26,7 @@ class Invoice extends Component {
     componentDidMount = () => {
         this.props.post("/invoice/fetch", {invoice: this.props.match.params.uuid})
         .then(res => this.setState({...res?.data, loaded: true}))
-        .catch(err => console.log(err));
+        .catch(err => window.location.href = "/my");
     }
 
     onChange = e => this.setState({[e.target.name]: e.target.value});
@@ -43,8 +44,27 @@ class Invoice extends Component {
         
             <React.Fragment>
                 {this.state.loaded ? 
+                    this.state.finalized ?
+                    <InvoiceViewApp
+                        invoiceUuid={this.state.uuid}
+                        number={this.state.number}
+                        currency={this.state.currency}
+                        taxes={this.state.taxes}
+                        taxesFull={this.state.taxesFull}
+                        items={this.state.items}
+                        products={this.state.products}
+                        finalized={this.state.finalized}
+                        paid={this.state.paid}
+                        reduction={this.state.reduction}
+                        notes={this.state.notes}
+                        createdAt={this.state.createdAt}
+                        updatedAt={this.state.updatedAt}
+                        customerDetails={this.state.customerDetails}
+                    />
+                    :
                     <InvoiceApp
                         invoiceUuid={this.state.uuid}
+                        number={this.state.number}
                         currency={this.state.currency}
                         taxes={this.state.taxes}
                         taxesFull={this.state.taxesFull}
