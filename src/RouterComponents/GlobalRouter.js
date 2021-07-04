@@ -18,6 +18,7 @@ import Product from '../pages/products/one';
 import Test from '../pages/scan/qr';
 import Process from '../pages/scan/process';
 import NewProduct from '../pages/products/new';
+import InvoicePDF from '../pages/invoice/pdf';
 
 export default function GlobalRouter () {
 
@@ -48,6 +49,10 @@ export default function GlobalRouter () {
 
                             <Route exact="true" path="/select">
                                 <Select />
+                            </Route>
+
+                            <Route exact="true" path="/invoice/pdf/:uuid">
+                                <InvoicePDF/>
                             </Route>
 
                             <CoreTheme>

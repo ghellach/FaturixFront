@@ -34,12 +34,12 @@ class AddProduct extends React.Component {
             <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" >
                 <div className="modal-content" style={{borderRadius: "2rem"}}>
                     <div className="modal-header">
-                        <h5 className="modal-title">Chercher un produit</h5>
+                        <h5 className="modal-title">{this.props.lang.invoice.lookUp}</h5>
                         <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div className="modal-body">
 
-                        <h6>Entrer le nom</h6>
+                        <h6>{this.props.lang.invoice.enterName}</h6>
                         <input type="text" name="name" className="form-control" onChange={this.activeSearch} value={this.state.name} />
                         <ul className="list-group">
                             {this.state.results.map(product => (
@@ -53,7 +53,7 @@ class AddProduct extends React.Component {
 
                     </div>
                     <div className="modal-footer">
-                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal"><i className="fas fa-undo-alt"></i> Annuler</button>
+                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal"><i className="fas fa-undo-alt"></i> {this.props.lang.invoice.cancel}</button>
                         {/*<button type="button" className="btn btn-primary"><i className="fas fa-check"></i> Enregister</button>*/}
                     </div>
                 </div>

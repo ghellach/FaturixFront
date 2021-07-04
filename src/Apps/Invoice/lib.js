@@ -1,4 +1,7 @@
+import React from 'react';
+
 const errorHandler =(e, r) => console.log(e);
+
 
 
 export function modelInvoice () {return this.invoiceModeller(this.state.currency, this.state.items, this.state.taxes, false, false) };
@@ -190,7 +193,47 @@ export function SavingModal (props) {
     return (<div className="modal fade" id="savingModal" tabindex="-1"  data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div className="modal-dialog modal-dialog-centered">
                     <div style={{borderRadius: "2rem"}} className="modal-content">
-                        {props?.allDone ? 
+                        {props?.reasonFailed ? 
+                            <div className="modal-body">
+                                {props.reasonFailed === "noCustomer" ? <h6>
+                                    Make sure to enter all required customer info.
+                                </h6> : null}
+
+                                {props.reasonFailed === "alreadyFinalized" ? <h6>
+                                    Invoice already finalized, reload to view.
+                                </h6> : null}
+
+                                {props.reasonFailed === "quantityOverflow" ? 
+                                <React.Fragment>
+                                    <p>
+                                        {props.whichFailed.quantity === 0 ? 
+                                            <React.Fragment>
+                                                {props.items.map(item => item.uuid === props.whichFailed.uuid ? 
+                                                <React.Fragment>
+                                                    <b>{item.name}</b>
+                                                </React.Fragment> : undefined)} <br/>is not available anymore. Please update the product's availability by clicking <a href={"/product/"+props.whichFailed.uuid}>here.</a>
+                                            </React.Fragment> : 
+                                            <React.Fragment>
+                                                The maximum quantity for <br/>
+                                                {props.items.map(item => item.uuid === props.whichFailed.uuid ? 
+                                                <React.Fragment>
+                                                    <b>{item.name}</b> is {props.whichFailed.quantity}
+                                                </React.Fragment> : undefined)} <br/>
+                                                Please decrease quantity, or update the product's availability by clicking <a href={"/product/"+props.whichFailed.uuid}>here.</a>
+                                            </React.Fragment>
+                                        }
+                                            
+                                    </p>
+                               </React.Fragment> : null}
+                                <hr/>
+                                <div className="row">
+                                    <div className="col-md-12 col-lg-12">
+                                        <button  className="btn btn-primary" onClick={() => window.location.href = "/invoice/"+props.whichFailed.uuid} style={{width: "100%"}}><i className="fas fa-times"/> Close window</button>
+                                    </div>
+                                </div>
+                            </div>
+                        :
+                        props?.allDone ? 
                             <div className="modal-body text-center">
                                 <i className="fas fa-check fa-3x" style={{color: "#00db6a"}} />
                                 <br/>

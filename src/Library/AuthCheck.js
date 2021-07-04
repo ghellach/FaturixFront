@@ -6,8 +6,9 @@ import * as actions from '../store/actions/actions';
 class AuthCheck extends React.Component {
 
     UNSAFE_componentWillMount() {
-        const {pathname} = this.props.location;
-        if(pathname !== "/login" && pathname !== "/new" && window.localStorage.getItem("session") === "") {
+        console.log(this.props);
+        const {pathname} = this.props.match.path;
+        if(pathname !== "/login" && pathname !== "/new" && pathname !== "/invoice/pdf/:uuid"  && window.localStorage.getItem("session") === "") {
             if(pathname === "/") setTimeout(() => this.props.history.push("/login"), 2000);
             else this.props.history.push("/login")
         }

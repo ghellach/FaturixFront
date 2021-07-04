@@ -90,6 +90,51 @@ const fr = {
             sameQuantity: "L'ancienne et la nouvelle quantité sont les mêmes.",
             cannotUpdate: "Ce produit ne peut être modifié."
         }
+    },
+    invoice: {
+        name: "Facture",
+        new: "Nouvelle Facture",
+        addProduct: "Ajouter un produit",
+
+        addTax: "Ajouter une taxe",
+
+        percentage: "Poucentage",
+        amount: "Montant",
+        remove: "Retirer",
+
+        subTotal: "Sous-total",
+        grossTotal: "Total",
+
+        price: "Prix",
+        taxes: "Taxes",
+        quantity: "Quantité",
+        reduction: "Reduction",
+
+        // for change modal
+        modify: "Modifier",
+        cancel: "Annuler",
+        save: "Enregistrer",
+
+        //for fetch modal
+        lookUp: "Chercher un produit",
+        enterName: "Entrer le nom",
+
+        // customer card
+        customerInfo: "CInformations du client",
+        firstName: "Prénom",
+        lastName: "Nom",
+        email: "Adresse Couriel",
+        phoneNumber: "Numéro de téléphone",
+        address: "Adresse",
+
+        // saving options
+
+        saveDraft: "Enregistrer comme brouillon",
+        save: "Enregistrer",
+        saveAndSend: "Enregistrer et envoyer au client",
+        send: "Envoyer au client",
+
+
     }
 }
 

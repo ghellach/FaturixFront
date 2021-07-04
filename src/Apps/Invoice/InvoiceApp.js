@@ -19,6 +19,7 @@ export class InvoiceApp extends Component {
             error: null,
             allDone: false,
             invoiceUuid: "",
+            drafted: false,
 
 
             // content
@@ -39,7 +40,18 @@ export class InvoiceApp extends Component {
             products: [],
             reduction: null,
             customerEmail: "",
-            customerPhone: ""
+            customerPhone: "",
+            customerAddress: "",
+            customerFirstName: "",
+            customerLastName: "",
+
+
+            // failed saving
+            reasonFailed: "",
+            whichFailed: {
+                uuid: "",
+                quantity: 0
+            }
         }
 
         this.invoiceModeller = invoiceModeller.bind(this);
@@ -56,6 +68,9 @@ export class InvoiceApp extends Component {
             products: this.props.products,
             customerEmail: this.props.customerDetails?.email,
             customerPhone: this.props.customerDetails?.phone,
+            customerFirstName: this.props.customerDetails?.firstName,
+            customerLastName: this.props.customerDetails?.lastName,
+            customerAddress: this.props.customerDetails?.address,
             notes: this.props.notes,
             reduction: this.props.reduction
         }, () => this.invoiceModeller(this.state.currency, this.state.items, this.state.taxes, false, false))
@@ -140,6 +155,7 @@ export class InvoiceApp extends Component {
        
     };
 
+
     removeItem = i => {
         let items = [];
         let products = [];
@@ -191,7 +207,7 @@ export class InvoiceApp extends Component {
 
     // http coms
 
-    saveDraft = () => {
+    saveDraft = async finalize => {
         var modal = new window.bootstrap.Modal(document.getElementById("savingModal"), {});
         modal.show();
 
@@ -205,7 +221,10 @@ export class InvoiceApp extends Component {
             taxes,
             customerDetails: {
                 email: this.state.customerEmail,
-                phone: this.state.customerPhone
+                phone: this.state.customerPhone,
+                firstName: this.state.customerFirstName,
+                lastName: this.state.customerLastName,
+                address: this.state.customerAddress
             },
             reduction: this.state.reduction ? {
                 type: this.state.reduction.type,
@@ -214,12 +233,42 @@ export class InvoiceApp extends Component {
         }
         console.log(body);
 
-        this.props.post("/invoice/draft", body)
-        .then(res => this.setState({invoiceUuid: res.data.invoice}))
-        .catch(err => console.log(err.response.data));
-        setTimeout(() => this.setState({allDone: true}), 1000);
+        try {
+            const res = await this.props.post("/invoice/draft", {...body});
+            this.setState({invoiceUuid: res.data.invoice, drafted: true})
+            if(finalize){
+                
+            }else setTimeout(() => this.setState({allDone: true}), 1000);
+        }catch(err){
+            console.log(err.response.data)
+        } 
+        
     }
 
+    save = async send => {
+        var modal = new window.bootstrap.Modal(document.getElementById("savingModal"), {});
+        modal.show();
+
+        await this.saveDraft(true);
+
+        if(this.state.drafted) this.props.post("/invoice/finalize", {
+            invoice: this.state.invoiceUuid
+        }) 
+        .then(() => {
+            this.setState({drafted: true})
+            setTimeout(() => this.setState({allDone: true}), 1000);
+        })
+        .catch(err => {
+            console.log(err.response);
+            this.setState({
+                reasonFailed: err.response.data.code,   
+                whichFailed: {
+                    uuid: err.response.data?.body?.uuid,
+                    quantity: err.response.data?.body?.quantity 
+                }
+            })
+        })
+    }
     
     render() {
 
@@ -234,6 +283,7 @@ export class InvoiceApp extends Component {
                             key={i}
                             item={item} 
                             i={i} 
+                            lang={this.props.lang}
                             changeQuantity={this.changeQuantity}
                             saveBuffer={this.saveBuffer}
                             currency={this.state.currency}
@@ -251,7 +301,7 @@ export class InvoiceApp extends Component {
                     <br/>
                     <br/>
                     <div className="col-12">
-                        <h3>Ajouter une nouvelle facture pour un client</h3>
+                        <h3>{this.props.lang.invoice.new}</h3>
                         {this.state.error ? <div className="alert alert-danger">{this.state.error}</div> : null}
                     </div>
                     <div className="col-md-12 col-lg-9">
@@ -262,7 +312,7 @@ export class InvoiceApp extends Component {
                                 <button className="btn btn-success" onClick={() => {
                                     var modal = new window.bootstrap.Modal(document.getElementById("addProduct"), {});
                                     modal.show();
-                                }} role="button"><i className="fas fa-arrow-down"></i> Ajouter un produit à la facture</button>
+                                }} role="button"><i className="fas fa-arrow-down"></i> {this.props.lang.invoice.addProduct}</button>
                                 {/*<form>
                                     <div className="mb-3">
                                         <label htmlFor="exampleInputEmail1" className="form-label">Email address</label>
@@ -296,7 +346,7 @@ export class InvoiceApp extends Component {
                                         var modal = new window.bootstrap.Modal(document.getElementById("addTax"), {});
                                         modal.show();
                                     }}>
-                                        <i className="fas fa-plus"/> Add tax
+                                        <i className="fas fa-plus"/> {this.props.lang.invoice.addTax}
                                     </button> <hr/>
                                     {this.state.reduction ?
                                         <React.Fragment>
@@ -304,8 +354,8 @@ export class InvoiceApp extends Component {
                                             <div className="row">
                                                 <div className="col-md-6 col-lg-4">
                                                     <select required className="form-control" name="type" onChange={this.changeRed} value={this.state.reduction?.type} style={{borderRadius: "2rem"}}>
-                                                        <option value="0">Percentage (%)</option>
-                                                        <option value="1">Amount {this.state.currency.isoSign}</option>
+                                                        <option value="0">{this.props.lang.invoice.percentage} (%)</option>
+                                                        <option value="1">{this.props.lang.invoice.amount} {this.state.currency.isoSign}</option>
                                                     </select>
                                                 </div>
                                                 <div className="col-md-6 col-lg-4">
@@ -330,7 +380,7 @@ export class InvoiceApp extends Component {
                                                 </div>
                                                 <div className="col-md-12 col-lg-4">
                                                     <button className="btn btn-danger" onClick={this.removeReduction}>
-                                                        <i className="fas fa-times"/> Remove
+                                                        <i className="fas fa-times"/> {this.props.lang.invoice.remove}
                                                     </button>
                                                 </div>
                                             </div>
@@ -343,8 +393,8 @@ export class InvoiceApp extends Component {
                                 </React.Fragment>
                                 : null }
                                 <hr/>
-                                <h6>Sub Total: {this.state.sums.subTotal} {this.state.currency.isoSign}</h6>
-                                <h5>Gross Total: {this.state.sums.grossTotal} {this.state.currency.isoSign}</h5>
+                                <h6>{this.props.lang.invoice.subTotal}: {this.state.sums.subTotal} {this.state.currency.isoSign}</h6>
+                                <h5>{this.props.lang.invoice.grossTotal}: {this.state.sums.grossTotal} {this.state.currency.isoSign}</h5>
                         
                                 
                             </div>
@@ -354,33 +404,37 @@ export class InvoiceApp extends Component {
                     <div className="col-md-12 col-lg-3">
                         <div className="card">
                             <div className="card-body d-grid gap-2">
-                                <h4>Informations du client</h4>
-                                <h6>Phone number: <input className="form-control" name="customerPhone" value={this.state.customerPhone} onChange={this.onChange} type="text" style={{borderRadius: "2rem"}}/></h6>
-                                <h6>Email address: <input className="form-control" name="customerEmail" value={this.state.customerEmail} onChange={this.onChange} type="email" style={{borderRadius: "2rem"}}/></h6>
+                                <h4>{this.props.lang.invoice.customerInfo}</h4>
+                                <h6>{this.props.lang.invoice.firstName}: <input className="form-control" name="customerFirstName" value={this.state.customerFirstName} onChange={this.onChange} type="text" style={{borderRadius: "2rem"}}/></h6>
+                                <h6>{this.props.lang.invoice.lastName}: <input className="form-control" name="customerLastName" value={this.state.customerLastName} onChange={this.onChange} type="text" style={{borderRadius: "2rem"}}/></h6>
+                                <h6>{this.props.lang.invoice.phoneNumber}*: <input className="form-control" name="customerPhone" value={this.state.customerPhone} onChange={this.onChange} type="text" style={{borderRadius: "2rem"}}/></h6>
+                                <h6>{this.props.lang.invoice.email}*: <input className="form-control" name="customerEmail" value={this.state.customerEmail} onChange={this.onChange} type="email" style={{borderRadius: "2rem"}}/></h6>
+                                <h6>{this.props.lang.invoice.address}: <input className="form-control" name="customerAddress" value={this.state.customerAddress} onChange={this.onChange} type="text" style={{borderRadius: "2rem"}}/></h6>
+                                
                                 
                                 <hr/>
                                 <h4>Options</h4>
                                 {this.state.products.length === 0 ? <React.Fragment>
                                     <button className="btn btn-outline-primary" disabled>
-                                        <i className="far fa-save"></i> Enregister comme brouillon
+                                        <i className="far fa-save"></i> {this.props.lang.invoice.saveDraft}
                                     </button>
                                     <button className="btn btn-primary" disabled>
-                                        <i className="fas fa-save"></i> Enregister la facture
+                                        <i className="fas fa-save"></i> {this.props.lang.invoice.save}
                                     </button>
                                     <button className="btn btn-success" disabled>
-                                        <i className="fas fa-share-square"></i> Enregister et envoyer au client
+                                        <i className="fas fa-share-square"></i> {this.props.lang.invoice.saveAndSend}
                                     </button> 
                                 </React.Fragment>
                                 
                                 :<React.Fragment> 
-                                    <button onClick={this.saveDraft} className="btn btn-outline-primary">
-                                        <i className="far fa-save"></i> Enregister comme brouillon
+                                    <button onClick={() => this.saveDraft(false)} className="btn btn-outline-primary">
+                                        <i className="far fa-save"></i> {this.props.lang.invoice.saveDraft}
                                     </button>
-                                    <button className="btn btn-primary">
-                                        <i className="fas fa-save"></i> Enregister la facture
+                                    <button onClick={this.save} className="btn btn-primary">
+                                        <i className="fas fa-save"></i> {this.props.lang.invoice.save}
                                     </button>
                                     <button className="btn btn-success">
-                                        <i className="fas fa-share-square"></i> Enregister et envoyer au client
+                                        <i className="fas fa-share-square"></i> {this.props.lang.invoice.saveAndSend}
                                     </button> 
                                 </React.Fragment>}
 
@@ -402,6 +456,9 @@ export class InvoiceApp extends Component {
                         lang={this.props.lang}
                         APP_URL={this.props.APP_URL}
                         invoiceUuid={this.state.invoiceUuid}
+                        items={this.state.items}
+                        reasonFailed={this.state.reasonFailed}
+                        whichFailed={this.state.whichFailed}
                     />
                 </div>
 

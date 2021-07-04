@@ -56,6 +56,9 @@ export class InvoiceApp extends Component {
             products: this.props.products,
             customerEmail: this.props.customerDetails?.email,
             customerPhone: this.props.customerDetails?.phone,
+            customerFirstName: this.props.customerDetails?.firstName,
+            customerLastName: this.props.customerDetails?.lastName,
+            customerAddress: this.props.customerDetails?.address,
             notes: this.props.notes,
             reduction: this.props.reduction
         }, () => this.invoiceModeller(this.state.currency, this.state.items, this.state.taxes, false, false))
@@ -135,7 +138,7 @@ export class InvoiceApp extends Component {
                                         <b>{item.name}</b>
                                     </div>
                                     <div className="col-md-12 col-lg-5" >
-                                        Prix: <b style={{fontSize: "1.3rem"}}><u>{item.unit?.subTotal?.toFixed(2)} $CAD</u></b> <br/> (Taxes: <b>{(item.unit?.total-item.unit?.subTotal).toFixed(2)} $CAD</b>) Quantité: <b>{item.quantity}</b>
+                                        {this.props.lang.invoice.price}: <b style={{fontSize: "1.3rem"}}><u>{item.unit?.subTotal?.toFixed(2)} $CAD</u></b> <br/> ({this.props.lang.invoice.taxes}: <b>{(item.unit?.total-item.unit?.subTotal).toFixed(2)} $CAD</b>) {this.props.lang.invoice.quantity}: <b>{item.quantity}</b>
                                     </div>
                                 </div>
                                 
@@ -175,7 +178,7 @@ export class InvoiceApp extends Component {
                                      <hr/>
                                     {this.state.reduction ?
                                         <React.Fragment>
-                                            <h5>Reduction: {(this.state.reduction?.payload).toFixed(2)}{this.state.reduction?.type === 0 ? "%" : this.state.reduction?.type === 1 ? "$" : null}
+                                            <h5>{this.props.lang.invoice.reduction}: {(this.state.reduction?.payload).toFixed(2)}{this.state.reduction?.type === 0 ? "%" : this.state.reduction?.type === 1 ? "$" : null}
                                             </h5>
                                             
                                         </React.Fragment>
@@ -187,8 +190,8 @@ export class InvoiceApp extends Component {
                                 </React.Fragment>
                                 : null }
                                 <hr/>
-                                <h6>Sub Total: {this.state.sums.subTotal} {this.state.currency.isoSign}</h6>
-                                <h5>Gross Total: {this.state.sums.grossTotal} {this.state.currency.isoSign}</h5>
+                                <h6>{this.props.lang.invoice.subTotal}: {this.state.sums.subTotal} {this.state.currency.isoSign}</h6>
+                                <h5>{this.props.lang.invoice.grossTotal}: {this.state.sums.grossTotal} {this.state.currency.isoSign}</h5>
                         
                                 
                             </div>
@@ -198,15 +201,18 @@ export class InvoiceApp extends Component {
                     <div className="col-md-12 col-lg-3">
                         <div className="card">
                             <div className="card-body d-grid gap-2">
-                                <h4>Informations du client</h4>
-                                <h6>Phone number: {this.state.customerPhone}</h6>
-                                <h6>Email address: {this.state.customerEmail}</h6>
+                                <h4>{this.props.lang.invoice.customerInfo}</h4>
+                                <h6>{this.props.lang.invoice.firstName}: {this.state.customerFirstName}</h6>
+                                <h6>{this.props.lang.invoice.lastName}: {this.state.customerLastName}</h6>
+                                <h6>{this.props.lang.invoice.phoneNumber}: {this.state.customerPhone}</h6>
+                                <h6>{this.props.lang.invoice.email}: {this.state.customerEmail}</h6>
+                                <h6>{this.props.lang.invoice.address}: {this.state.customerAddress}</h6>
                                 
                                 <hr/>
                                 <h4>Options</h4>
                                 <React.Fragment>
                                     <button className="btn btn-success">
-                                        <i className="fas fa-share-square"></i> Envoyer au client
+                                        <i className="fas fa-share-square"></i> {this.props.lang.invoice.send}
                                     </button> 
                                 </React.Fragment>
 

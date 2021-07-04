@@ -17,7 +17,7 @@ export default function Item (props) {
             <div className="modal-dialog modal-dialog-centered" >
                 <div className="modal-content" style={{borderRadius: "2rem"}}>
                     <div className="modal-header">
-                        <h5 className="modal-title">Modifier {item.name}</h5>
+                        <h5 className="modal-title">{props.lang.invoice.modify} {item.name}</h5>
                         <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div className="modal-body">
@@ -26,7 +26,7 @@ export default function Item (props) {
                         <input value={buffer.name} onChange={(e) => setBuffer({...buffer, name: e.target.value})} className="form-control" style={{borderRadius: "1rem"}}></input>
                         <br/>*/}
 
-                        <h6>Prix</h6>
+                        <h6>{props.lang.invoice.price}</h6>
                         <CurrencyInput
                             style={{borderRadius: "1rem"}}
                             class="form-control"
@@ -51,14 +51,14 @@ export default function Item (props) {
                         />
                         <br/>*/}
 
-                        <h6>Quantité</h6>
+                        <h6>{props.lang.invoice.quantity}</h6>
                         <input type="number" pattern="[0-9]*" value={buffer.quantity} onChange={(e) => setBuffer({...buffer, quantity: Number(e.target.value)})} className="form-control" style={{borderRadius: "1rem"}}></input>
                         <br/>
 
                     </div>
                     <div className="modal-footer">
-                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal"><i className="fas fa-undo-alt"></i> Annuler</button>
-                        <button type="button" className="btn btn-primary" onClick={() => props.saveBuffer(props.i, buffer)} data-bs-dismiss="modal"><i className="fas fa-check"></i> Enregister</button>
+                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal"><i className="fas fa-undo-alt"></i> {props.lang.invoice.cancel}</button>
+                        <button type="button" className="btn btn-primary" onClick={() => props.saveBuffer(props.i, buffer)} data-bs-dismiss="modal"><i className="fas fa-check"></i> {props.lang.invoice.save}</button>
                     </div>
                 </div>
             </div>
@@ -71,7 +71,7 @@ export default function Item (props) {
                 <b>{item.name}</b>
             </div>
             <div className="col-md-12 col-lg-5" >
-                Prix: <b style={{fontSize: "1.3rem"}}><u>{item.unit?.subTotal?.toFixed(2)} $CAD</u></b> <br/> (Taxes: <b>{(item.unit?.total-item.unit?.subTotal).toFixed(2)} $CAD</b>) Quantité: <b>{item.quantity}</b>
+                {props.lang.invoice.price}: <b style={{fontSize: "1.3rem"}}><u>{item.unit?.subTotal?.toFixed(2)} $CAD</u></b> <br/> ({props.lang.invoice.taxes}: <b>{(item.unit?.total-item.unit?.subTotal).toFixed(2)} $CAD</b>) {props.lang.invoice.quantity}: <b>{item.quantity}</b>
             </div>
             <div className="col-md-12 col-lg-3">
                 <button className="btn btn-outline-success" onClick={() => props.changeQuantity(props.i, Number(item.quantity+1))} style={{width: "33%"}}><i className="fas fa-plus"></i> 1</button>

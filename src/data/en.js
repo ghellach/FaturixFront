@@ -91,6 +91,52 @@ const en = {
             sameQuantity: "The old and the new quantities are the same.",
             cannotUpdate: "This product cannot be modified."
         }
+    },
+    invoice: {
+        name: "Invoice",
+        new: "New Invoice",
+        addProduct: "Add a product",
+
+        addTax: "Add tax",
+
+        percentage: "Percentage",
+        amount: "Amount",
+        remove: "Remove",
+
+        subTotal: "Sub total",
+        grossTotal: "Gross Total",
+
+        price: "Price",
+        taxes: "Taxes",
+        quantity: "Quantity",
+        reduction: "Reduction",
+
+        // for change modal
+        modify: "Modify",
+        cancel: "Cancel",
+        save: "Save",
+
+        //for fetch modal
+        lookUp: "Lookup a product",
+        enterName: "Enter the name",
+
+        // customer card
+        customerInfo: "Customer's info",
+        firstName: "First Name",
+        lastName: "Last Name",
+        email: "Email Address",
+        phoneNumber: "Phone Number",
+        address: "Address",
+
+        // saving options
+
+        saveDraft: "Save as draft",
+        save: "Save",
+        saveAndSend: "Save and send to customer",
+        send: "Send to customer",
+
+
+
     }
 }
 
