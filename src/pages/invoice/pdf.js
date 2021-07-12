@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import { jsPDF } from "jspdf";
 import 'jspdf-autotable';
 
+
 import {withRouter} from 'react-router-dom';
 import axios from 'axios';
 
@@ -24,20 +25,9 @@ class PDFInv extends React.Component{
             .then(res => {
                 const invoice = res.data;
                 console.log(invoice);
-    
-                if(!this.state.gen) {
-                    const doc = new jsPDF();
-                    doc.text("Hello world!", 10, 10);
-                    doc.autoTable({
-                        head: [['Name', 'Email', 'Country']],
-                        body: [
-                          ['David', 'david@example.com', 'Sweden'],
-                          ['Castille', 'castille@example.com', 'Spain'],
-                          // ...
-                        ],
-                      })
+
                     doc.save("a4.pdf");
-                }
+            
         
                 this.setState({gen: true});
             })

@@ -158,6 +158,9 @@ export class InvoiceApp extends Component {
                     <br/>
                     <div className="col-12">
                         <h3>Facture #{this.props.number}</h3>
+                        <br/>
+                        <button className="btn btn-primary" onClick={this.props.downloadPDF}>Download</button>
+                        <hr/>
                         {this.state.error ? <div className="alert alert-danger">{this.state.error}</div> : null}
                     </div>
                     <div className="col-md-12 col-lg-9">

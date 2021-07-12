@@ -34,6 +34,10 @@ class Invoice extends Component {
     clickedInput = (i, n) => {
         console.log(i, n);
     }
+
+    downloadPDF = () => {
+        
+    }
     
     render() {
 
@@ -60,6 +64,7 @@ class Invoice extends Component {
                         createdAt={this.state.createdAt}
                         updatedAt={this.state.updatedAt}
                         customerDetails={this.state.customerDetails}
+                        downloadPDF={this.downloadPDF}
                     />
                     :
                     <InvoiceApp
